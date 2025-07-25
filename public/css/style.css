@@ -1,75 +1,33 @@
-/* html body  */
-html, body {
-  background-color: rgb(219, 107, 66);
-  height: 100%;
-  margin: 0;
+/* Layout must support sticky footer */
+body {
+  background-color: #E67E22;
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
 }
 
-/* Your main content wrapper */
 main {
   flex: 1;
 }
 
-/* Footer */
-.footer {
-  width: 100%;
-  background-color: #1e1919;
-  color: #EEEEEE;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  padding: 1rem 0;
+/* Footer Styles */
+/* Push footer to bottom */
+html, body {
+  height: 100%;
+  margin: 0;
 }
 
-.footer-container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
+body {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 0 1rem;
 }
 
-.footer-text {
-  font-size: 14px;
-  text-align: center;
+main {
+  flex: 1;
 }
 
-.footer-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-}
 
-.footer-links a {
-  color: #EEEEEE;
-  text-decoration: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  transition: all 0.2s ease-in-out;
-}
 
-.footer-links a:hover {
-  color: white;
-  box-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
-}
-
-/* Optional responsive tweaks */
-@media (min-width: 600px) {
-  .footer-container {
-    flex-direction: row;
-    justify-content: space-between;
-  }
-
-  .footer-text {
-    text-align: left;
-  }
-}
 
 
 
