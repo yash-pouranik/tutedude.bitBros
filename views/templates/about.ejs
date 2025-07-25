@@ -1,90 +1,85 @@
 <% layout("layouts/boilerplate") %>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>About Us - Apna Bazaar</title>
-  <link rel="stylesheet" href="/styles/about.css">
-</head>
-<body>
-  <header>
-    <h1>About Apna Bazaar</h1>
-    <p>Your trusted local vendor-supplier connection platform.</p>
-  </header>
+<section class="about-container">
+  <h1>About Apna Bazaar</h1>
+  <p class="tagline">Connecting local vendors and suppliers with ease.</p>
 
-  <main class="about-content">
-    <section>
-      <h2>Who Are We?</h2>
-      <p>Apna Bazaar is a community-driven platform built to bridge the gap between local vendors and suppliers. We empower small businesses by providing them visibility and customers by providing fresh and affordable products.</p>
-    </section>
+  <div class="section">
+    <h2>Who We Are</h2>
+    <p>Apna Bazaar is a platform built to bridge the gap between local vendors and product suppliers. We aim to empower small businesses while providing fresh and affordable options for customers.</p>
+  </div>
 
-    <section>
-      <h2>What We Offer</h2>
-      <ul>
-        <li>🛒 A wide variety of fresh and packed products</li>
-        <li>🤝 Easy and secure vendor-supplier communication</li>
-        <li>🚚 Fast and reliable deliveries</li>
-        <li>📞 24/7 customer support</li>
-      </ul>
-    </section>
+  <div class="section">
+    <h2>What We Offer</h2>
+    <ul>
+      <li>🛒 Fresh & Packed Products</li>
+      <li>🤝 Easy Vendor-Supplier Communication</li>
+      <li>🚚 Timely Delivery System</li>
+      <li>📞 Friendly Support</li>
+    </ul>
+  </div>
 
-    <section>
-      <h2>Our Vision</h2>
-      <p>To build a decentralized and digital India where every street vendor can thrive in a connected ecosystem, without any barriers.</p>
-    </section>
-  </main>
-
-  <footer>
-    <p>&copy; 2025 Apna Bazaar. All rights reserved.</p>
-  </footer>
-</body>
-</html>
+  <div class="section">
+    <h2>Our Vision</h2>
+    <p>We envision a connected ecosystem where even the smallest street vendors can grow digitally and thrive independently.</p>
+  </div>
+</section>
 
 <style>
-    body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to right, #ecb6b7, #ceb84c); /* Reddish-orange gradient */
-  color: #fff;
-}
-
-header {
-  text-align: center;
-  padding: 2rem 1rem;
-  background: rgba(0, 0, 0, 0.3);
-}
-
-h1 {
-  margin: 0;
-  font-size: 2.5rem;
-}
-
-.about-content {
-  padding: 2rem;
+    .about-container {
   max-width: 800px;
-  margin: auto;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
+  margin: 2rem 2rem;
+  padding: 2rem;
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.about-content section {
+.about-container h1 {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-size: 2.5rem;
+  color: #444;
+}
+
+.tagline {
+  text-align: center;
+  font-style: italic;
+  color: #777;
   margin-bottom: 2rem;
 }
 
-ul {
-  padding-left: 1.2rem;
+.section {
+  margin-bottom: 2rem;
 }
 
-li {
+.section h2 {
+  color: #222;
   margin-bottom: 0.5rem;
 }
 
-footer {
-  text-align: center;
-  padding: 1rem;
-  background: rgba(0, 0, 0, 0.2);
-  font-size: 0.9rem;
+.section p, .section ul {
+  line-height: 1.6;
+  color: #555;
 }
 
+.section ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.section li {
+  margin-bottom: 0.5rem;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.section li::before {
+  content: "•";
+  color: #ff5722;
+  position: absolute;
+  left: 0;
+}
 </style>

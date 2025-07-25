@@ -104,6 +104,18 @@ app.get("/about", (req, res)=>{
     res.render("templates/about.ejs");
 });
 
+app.get("/terms", (req, res)=>{
+    res.render("templates/terms.ejs");
+});
+
+app.get("/privacy", (req, res)=>{
+    res.render("templates/privacy.ejs");
+});
+
+app.get("/contact", (req, res)=>{
+    res.render("templates/contact.ejs");
+});
+
 
 //page not found
  app.all("", (req, res, next) => {
