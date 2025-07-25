@@ -54,6 +54,9 @@ main()
     console.log("Connection to DB Failed");
 });
 
+//local variable middleware
+const {setLocals} = require("./middlewares.js");
+
 
 
 
@@ -70,6 +73,9 @@ const sessionConfig = {
 
 app.use(session(sessionConfig));
 app.use(flash());  
+
+
+app.use(setLocals);
 
 const userRoute = require("./routes/user") 
 app.use("/", userRoute);
