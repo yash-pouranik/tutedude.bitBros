@@ -53,9 +53,12 @@ app.use("/", userRoute);
 
 
 app.get("/", (req, res) => {
-    res.render("home/home.ejs");
-})
+    res.render("templates/home.ejs");
+});
 
+app.get("/shopping", (req, res)=>{
+    res.render("templates/shopping.ejs");
+});
 
 
 

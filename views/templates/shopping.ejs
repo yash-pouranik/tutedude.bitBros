@@ -1,0 +1,53 @@
+<% layout('layouts/boilerplate') %>
+
+<section class="shopping-page">
+  <div class="container">
+    <h2>Fresh Products</h2>
+
+    <!-- Dairy Section -->
+    <div class="category">
+      <h3>Dairy</h3>
+      <div class="products-grid">
+        <% freshDairy.forEach(product => { %>
+          <div class="product-card">
+            <img src=hehe alt="haha">
+            <h4>name</h4>
+            <p>₹price</p>
+            <button>Add to Cart</button>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- Vegetables Section -->
+    <div class="category">
+      <h3>Vegetables</h3>
+      <div class="products-grid">
+    
+          <div class="product-card">
+            <img src="hehe" alt="haha">
+            <h4>name</h4>
+            <p>₹1200</p>
+            <button>Add to Cart</button>
+          </div>
+        
+      </div>
+    </div>
+
+    <h2>Packed Products</h2>
+
+    <!-- Packed Section -->
+    <div class="category">
+      <div class="products-grid">
+
+          <div class="product-card">
+            <img src="hehe" alt="haha">
+            <h4>name</h4>
+            <p>₹1200</p>
+            <button>Add to Cart</button>
+          </div>
+ 
+      </div>
+    </div>
+  </div>
+</section>
