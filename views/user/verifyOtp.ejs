@@ -1,0 +1,13 @@
+<% layout("layouts/boilerplate") %>
+<link rel="stylesheet" href="/css/user.css">
+
+<form class="form" action="/verify-otp" method="POST">
+  <div class="flex-column">
+    <label>Enter OTP</label>
+    <div class="inputForm">
+      <input type="text" class="input" name="otp" placeholder="Enter the OTP" required />
+    </div>
+  </div>
+
+  <button class="button-submit">Verify OTP</button>
+</form>

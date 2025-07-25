@@ -1,5 +1,4 @@
-<% layout("layouts/boilerplate") %>
-<style>
+
 .form {
   display: flex;
   flex-direction: column;
@@ -160,15 +159,3 @@ svg {
     margin-top: 5px;
   }
 }
-</style>
-<form class="form" action="/login" method="POST">
-  <div class="flex-column">
-    <label>Phone Number</label>
-    <div class="inputForm">
-      <input type="text" class="input" name="phone" placeholder="Enter your phone number" required />
-    </div>
-  </div>
-
-  <button class="button-submit">Send OTP</button>
-  <p class="p">Don't have an account? <a href="/signup" class="span">Sign up</a></p>
-</form>

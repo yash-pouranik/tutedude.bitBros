@@ -1,6 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync");
+const User = require("../model/user")
+
+//otp
+const otpStore = new Map();
+
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
 
 
 // signup route
@@ -52,13 +60,31 @@ router.post("/login", wrapAsync(async (req, res) => {
 
     req.session.phone = phone; // store temporarily
     req.flash("success", "OTP sent to your number");
-    res.redirect("/verify-otp");
+    res.redirect("/verifyOtp");
 }));
 
-router.get("/verify-otp", (req, res) => {
-    if (!req.session.phone) return res.redirect("/login");
-    res.render("auth/verifyOtp");
+// OTP verify page dikhane wala route
+router.get("/verifyOtp", (req, res) => {
+  res.render("user/verifyOtp"); // make sure views/user/verifyOtp.ejs exists
 });
+
+
+router.post("/verify", (req, res) => {
+  const { phone, otp } = req.body;
+
+  // ✅ OTP verify karne ke baad session set karo
+  if (otp === "1234") {
+    if (!req.session.user) {
+      req.session.user = {};
+    }
+    req.session.user.phone = phone;
+
+    return res.redirect("/dashboard"); // ya jahan chaho bhejo
+  } else {
+    return res.send("Invalid OTP");
+  }
+});
+
 
 router.post("/verify-otp", wrapAsync(async (req, res) => {
     const { otp } = req.body;

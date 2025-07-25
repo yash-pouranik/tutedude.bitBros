@@ -1,4 +1,5 @@
 <% layout("layouts/boilerplate") %>
+
 <style>
 .form {
   display: flex;
@@ -161,7 +162,16 @@ svg {
   }
 }
 </style>
-<form class="form" action="/login" method="POST">
+
+
+<form class="form" action="/signup" method="POST">
+  <div class="flex-column">
+    <label>Name</label>
+    <div class="inputForm">
+      <input type="text" class="input" name="username" placeholder="Enter your name" required />
+    </div>
+  </div>
+
   <div class="flex-column">
     <label>Phone Number</label>
     <div class="inputForm">
@@ -169,6 +179,24 @@ svg {
     </div>
   </div>
 
-  <button class="button-submit">Send OTP</button>
-  <p class="p">Don't have an account? <a href="/signup" class="span">Sign up</a></p>
+  <div class="flex-column">
+    <label>User Type</label>
+    <div class="inputForm">
+      <select class="input" name="userType" required>
+        <option value="">Select</option>
+        <option value="supplier">Supplier</option>
+        <option value="vendor">Vendor</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="flex-column">
+    <label>Address</label>
+    <div class="inputForm">
+      <input type="text" class="input" name="address" placeholder="Enter your address" required />
+    </div>
+  </div>
+
+  <button class="button-submit">Sign Up</button>
+  <p class="p">Already have an account? <a href="/login" class="span">Login</a></p>
 </form>
