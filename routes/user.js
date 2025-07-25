@@ -65,24 +65,11 @@ router.post("/login", wrapAsync(async (req, res) => {
 
 // OTP verify page dikhane wala route
 router.get("/verifyOtp", (req, res) => {
-  res.render("user/verifyOtp"); // make sure views/user/verifyOtp.ejs exists
-});
-
-
-router.post("/verify", (req, res) => {
-  const { phone, otp } = req.body;
-
-  // ✅ OTP verify karne ke baad session set karo
-  if (otp === "1234") {
-    if (!req.session.user) {
-      req.session.user = {};
-    }
-    req.session.user.phone = phone;
-
-    return res.redirect("/dashboard"); // ya jahan chaho bhejo
-  } else {
-    return res.send("Invalid OTP");
+  if (!req.session.phone) {
+    req.flash("error", "Please login first");
+    return res.redirect("/login");
   }
+  res.render("user/verifyOtp"); // Make sure verifyOtp.ejs exists
 });
 
 
@@ -94,10 +81,10 @@ router.post("/verify-otp", wrapAsync(async (req, res) => {
 
     if (!user || !user.otp || user.otp.code !== otp || new Date() > user.otp.expiresAt) {
         req.flash("error", "Invalid or expired OTP");
-        return res.redirect("/verify-otp");
+        return res.redirect("/verifyOtp");
     }
 
-    // OTP verified
+    // OTP is valid
     user.otp = undefined;
     await user.save();
 
@@ -105,6 +92,9 @@ router.post("/verify-otp", wrapAsync(async (req, res) => {
     req.flash("success", "Logged in successfully");
     res.redirect("/dashboard");
 }));
+
+
+
 
 
 // logout
