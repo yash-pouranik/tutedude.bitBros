@@ -1,0 +1,47 @@
+<% layout("layouts/boilerplate") %>
+<link rel="stylesheet" href="/css/addProduct.css">
+
+<form action="/supplier/<%= supplier._id %>/add-product" method="POST" enctype="multipart/form-data">
+  <label>Product Name:</label>
+  <input type="text" name="name" required />
+
+  <label>Description:</label>
+  <textarea name="description"></textarea>
+
+  <label>Type:</label>
+  <select name="type" required>
+    <option value="">-- Select --</option>
+    <option value="fresh">Fresh</option>
+    <option value="packed">Packed</option>
+  </select>
+
+  <label>Fresh Category:</label>
+  <select name="freshCategory">
+    <option value="">-- Select --</option>
+    <option value="veggies">Veggies</option>
+    <option value="dairy">Dairy</option>
+  </select>
+
+  <label>Price:</label>
+  <input type="number" name="price" step="0.01" required />
+
+  <label>Quantity:</label>
+  <input type="number" name="quantity" required />
+
+  <label>Unit:</label>
+  <select name="unit" required>
+    <option value="">-- Select --</option>
+    <option value="kg">kg</option>
+    <option value="litre">litre</option>
+    <option value="pack">pack</option>
+    <option value="piece">piece</option>
+  </select>
+
+  <label>Image URL:</label>
+  <input type="text" name="imageUrl" placeholder="Optional" />
+
+  <label>Available:</label>
+  <input type="checkbox" name="availability" checked />
+
+  <button type="submit">Add Product</button>
+</form>

@@ -49,12 +49,15 @@ const productSchema = new mongoose.Schema({
     default: '/images/default-product.jpg' // you can update this
   },
 
-  vendorId: {
+  supplierId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
-
+  availability: {
+  type: Boolean,
+  default: true
+},
   createdAt: {
     type: Date,
     default: Date.now

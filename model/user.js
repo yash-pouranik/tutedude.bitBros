@@ -18,14 +18,14 @@ const userSchema = new mongoose.Schema({
     required: true
   },
   address: {
-    street: String,
-    city: String,
-    state: String,
-    pincode: String
+    street: { type: String, default: "" },
+    city: { type: String, default: "" },
+    state: { type: String, default: "" },
+    pincode: { type: String, default: "" }
   },
   otp: {
-    code: String,        // store OTP temporarily
-    expiresAt: Date      // OTP expiry time
+    code: String,
+    expiresAt: Date
   },
   createdAt: {
     type: Date,

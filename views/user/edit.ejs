@@ -1,0 +1,38 @@
+<% layout("layouts/boilerplate") %>
+<link rel="stylesheet" href="/css/user.css">
+
+<div class="container my-5">
+  <h2>Edit Profile</h2>
+<form action="/profile/<%= currUser._id %>/edit" method="POST">
+    
+    <!-- Phone -->
+    <div class="mb-3">
+      <label for="phone" class="form-label">Phone</label>
+      <input type="text" name="phone" id="phone" class="form-control" value="<%= currUser.phone %>" required>
+    </div>
+
+    <!-- Address -->
+    <div class="mb-3">
+      <label for="street" class="form-label">Street</label>
+      <input type="text" name="address[street]" id="street" class="form-control" value="<%= currUser.address?.street || '' %>">
+    </div>
+
+    <div class="mb-3">
+      <label for="city" class="form-label">City</label>
+      <input type="text" name="address[city]" id="city" class="form-control" value="<%= currUser.address?.city || '' %>">
+    </div>
+
+    <div class="mb-3">
+      <label for="state" class="form-label">State</label>
+      <input type="text" name="address[state]" id="state" class="form-control" value="<%= currUser.address?.state || '' %>">
+    </div>
+
+    <div class="mb-3">
+      <label for="pincode" class="form-label">Pincode</label>
+      <input type="text" name="address[pincode]" id="pincode" class="form-control" value="<%= currUser.address?.pincode || '' %>">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Profile</button>
+  </form>
+</div>
+

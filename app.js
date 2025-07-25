@@ -12,6 +12,12 @@ const session = require("express-session");
 const flash = require("connect-flash");
 
 
+//for images
+const multer = require("multer");
+const upload = multer();
+
+
+
 //models
 const User = require("./model/user.js");
 
@@ -78,7 +84,9 @@ app.use(flash());
 app.use(setLocals);
 
 const userRoute = require("./routes/user") 
+const productRoute = require("./routes/product.js")
 app.use("/", userRoute);
+app.use("/", productRoute);
 
 app.get("/", (req, res) => {
     res.render("templates/home.ejs");

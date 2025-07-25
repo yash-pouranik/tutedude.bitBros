@@ -89,7 +89,12 @@ router.post("/verify-otp", wrapAsync(async (req, res) => {
     user.otp = undefined;
     await user.save();
 
-    req.session.userId = user._id;
+    req.session.user = {
+      _id: user._id,
+      userType: user.userType,
+      name: user.name,
+      phone: user.phone,
+    };
     req.flash("success", "Logged in successfully");
     res.redirect("/dashboard");
 }));
@@ -103,5 +108,31 @@ router.get("/logout", isLoggedIn, (req, res) => {
 router.get("/dashboard", isLoggedIn, (req, res)=>{
     res.render("user/dashboard.ejs");
 });
+
+router.get('/profile/edit/:id', isLoggedIn, async (req, res) => {
+  const user = await User.findById(req.params.id);
+  res.render('user/edit', { currUser: user });
+});
+
+
+router.post("/profile/:id/edit", async (req, res) => {
+  const { id } = req.params;
+  const { phone, address } = req.body;
+
+  try {
+    await User.findByIdAndUpdate(id, {
+      phone,
+      address
+    });
+
+    res.redirect("/dashboard"); // or wherever you want
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating profile");
+  }
+});
+
+
+
 
 module.exports = router;

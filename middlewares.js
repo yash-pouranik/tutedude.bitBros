@@ -2,8 +2,8 @@ const User = require("./model/user");
 
 module.exports.setLocals = async (req, res, next) => {
   try {
-    if (req.session.userId) {
-      const user = await User.findById(req.session.userId);
+    if (req.session.user) {
+      const user = await User.findById(req.session.user._id);
       res.locals.currUser = user;
     } else {
       res.locals.currUser = null;
@@ -22,8 +22,8 @@ module.exports.setLocals = async (req, res, next) => {
 
 module.exports.isLoggedIn =async (req, res, next) => {
   try {
-    if (req.session.userId) {
-      const user = await User.findById(req.session.userId);
+    if (req.session.user) {
+      const user = await User.findById(req.session.user._id);
       res.locals.currUser = user;
       next();
     } else {
@@ -35,3 +35,14 @@ module.exports.isLoggedIn =async (req, res, next) => {
     res.redirect("/login");
   }
 }
+
+// middlewares/isVendor.js
+
+module.exports.isSupplier = (req, res, next) => {
+  console.log(req.session.user);
+  if (req.session.user && req.session.user.userType === 'supplier') {
+    return next();
+  } else {
+    return res.status(403).send('Access denied. Only vendors allowed.');
+  }
+};
