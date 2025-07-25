@@ -45,6 +45,10 @@ main()
 });
 
 
+const userRoute = require("./routes/user") 
+app.use("/", userRoute);
+
+
 app.get("/", (req, res) => {
     res.render("home/home.ejs");
 })
