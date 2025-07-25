@@ -88,6 +88,9 @@ app.get("/shopping", (req, res)=>{
     res.render("templates/shopping.ejs");
 });
 
+app.get("/dashboard", (req, res)=>{
+    res.render("user/dashboard.ejs");
+});
 
 
 
