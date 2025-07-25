@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync");
 const User = require("../model/user")
+const {isLoggedIn} = require("../middlewares")
 
 //otp
 const otpStore = new Map();
@@ -93,15 +94,14 @@ router.post("/verify-otp", wrapAsync(async (req, res) => {
     res.redirect("/dashboard");
 }));
 
-
-
-
-
 // logout
-router.get("/logout", (req, res) => {
+router.get("/logout", isLoggedIn, (req, res) => {
     req.session.destroy();
     res.redirect("/");
 });
 
+router.get("/dashboard", isLoggedIn, (req, res)=>{
+    res.render("user/dashboard.ejs");
+});
 
 module.exports = router;
