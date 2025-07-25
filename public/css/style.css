@@ -1,6 +1,5 @@
-/* Layout must support sticky footer */
 body {
-  background-color: #E67E22;
+  background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -11,7 +10,6 @@ main {
 }
 
 /* Footer Styles */
-/* Push footer to bottom */
 html, body {
   height: 100%;
   margin: 0;
