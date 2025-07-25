@@ -18,3 +18,20 @@ module.exports.setLocals = async (req, res, next) => {
 
   next();
 };
+
+
+module.exports.isLoggedIn =async (req, res, next) => {
+  try {
+    if (req.session.userId) {
+      const user = await User.findById(req.session.userId);
+      res.locals.currUser = user;
+      next();
+    } else {
+      req.flash("error", "you  must be Logged in");
+      res.redirect("/login");
+    }
+  } catch (err) {
+    req.flash("error", "you  must be Logged in");
+    res.redirect("/login");
+  }
+}
