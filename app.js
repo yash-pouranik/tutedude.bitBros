@@ -16,6 +16,13 @@ const flash = require("connect-flash");
 const User = require("./model/user.js");
 
 
+//otp
+const otpStore = new Map();
+
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({extended: true}));
@@ -48,9 +55,24 @@ main()
 });
 
 
+
+
+const sessionConfig = {
+  secret: "bitbrosSecret", // Or "bettersecret", but be consistent
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  },
+};
+
+app.use(session(sessionConfig));
+app.use(flash());  
+
 const userRoute = require("./routes/user") 
 app.use("/", userRoute);
-
 
 app.get("/", (req, res) => {
     res.render("home/home.ejs");
