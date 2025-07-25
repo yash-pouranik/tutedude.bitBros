@@ -8,7 +8,6 @@ const mongoose = require("mongoose");
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
-const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require("passport");
@@ -39,6 +38,15 @@ main()
 .catch((e) => {
     console.log("Connection to DB Failed");
 });
+
+
+app.get("/", (req, res) => {
+    res.render("home/home.ejs");
+})
+
+
+
+
 
 //page not found
  app.all("", (req, res, next) => {
