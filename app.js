@@ -92,6 +92,9 @@ app.get("/dashboard", (req, res)=>{
     res.render("user/dashboard.ejs");
 });
 
+app.get("/about", (req, res)=>{
+    res.render("templates/about.ejs");
+});
 
 
 //page not found
