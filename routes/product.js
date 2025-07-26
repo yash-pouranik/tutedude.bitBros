@@ -174,4 +174,43 @@ router.get('/products/allProducts', isLoggedIn, isSupplier, async (req, res) => 
   }
 });
 
+
+router.put('/products/:id', isLoggedIn, isSupplier, isOwner, async (req, res) => {
+  const { id } = req.params;
+  const { name, description, type, freshCategory, price, quantity, unit, imageUrl, availability } = req.body;
+
+  try {
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      {
+        name,
+        description,
+        type,
+        freshCategory: type === 'fresh' ? freshCategory : undefined,
+        price,
+        quantity,
+        unit,
+        imageUrl,
+        availability
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedProduct) {
+      req.flash('error', 'Product not found');
+      return res.redirect('/product/allProducts');
+    }
+
+    req.flash('success', 'Product updated successfully!');
+    res.redirect(`/product/${id}`);
+  } catch (err) {
+    console.error('Error updating product:', err);
+    req.flash('error', 'Something went wrong while updating the product');
+    res.redirect(`/products/${id}/edit`);
+  }
+});
+
+
+
+
 module.exports = router;
