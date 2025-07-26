@@ -23,6 +23,17 @@ const userSchema = new mongoose.Schema({
     state: { type: String, default: "" },
     pincode: { type: String, default: "" }
   },
+  location: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      default: 'Point'
+    },
+    coordinates: {
+      type: [Number], // [longitude, latitude]
+      default: [0, 0]
+    }
+  },
   otp: {
     code: String,
     expiresAt: Date
@@ -33,4 +44,8 @@ const userSchema = new mongoose.Schema({
   }
 });
 
+// Create geospatial index
+userSchema.index({ location: '2dsphere' });
+
 module.exports = mongoose.model('User', userSchema);
+
