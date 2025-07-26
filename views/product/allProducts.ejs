@@ -31,14 +31,25 @@
 
         <p><span class="fw-semibold">Added On:</span> <%= product.createdAt.toDateString() %></p>
       
-      <a class="btn btn-primary mt-2" href="/product/<%= product._id %>/addcart">Add to Cart</a>
 
-<% if (
-  currUser &&
-  currUser.userType === 'supplier' &&
-  String(product.supplierId._id) === String(currUser._id)
-) { %>
+      <% if (currUser && currUser.userType === 'vendor') { %>
+  <a class="btn btn-primary mt-2" href="/product/<%= product._id %>/addcart">Add to Cart</a>
+<% } else if (!currUser) { %>
+  <a class="btn btn-primary mt-2" href="/login">Add to Cart</a>
+<% } %>
+<%
+  const isOwner = currUser &&
+    currUser.userType === 'supplier' &&
+    String(product.supplierId._id) === String(currUser._id);
+%>
+
+<% if (isOwner) { %>
   <a href="/products/<%= product._id %>/edit" class="btn btn-warning mt-2">Edit Product</a>
+  <form action="/products/<%= product._id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this product?');">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="hidden" name="productId" value="<%= product._id %>">
+  <button type="submit" class="btn btn-warning mt-2">Delete Product</button>
+</form>
 <% } %>
 
       
