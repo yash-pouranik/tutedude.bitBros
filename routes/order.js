@@ -15,7 +15,6 @@ router.post("/place-order", async (req, res) => {
       
       req.flash("error", "Cart not Found")
     return res.status(400).redirect("/shopping");
-     
     }
 
     let totalAmount = 0;
