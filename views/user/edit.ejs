@@ -1,9 +1,9 @@
 <% layout("layouts/boilerplate") %>
 <link rel="stylesheet" href="/css/user.css">
 
-<div class="container my-5">
+<div class="container cont-form col-6 my-5">
   <h2>Edit Profile</h2>
-<form action="/profile/<%= currUser._id %>/edit" method="POST">
+<form action="/profile/<%= currUser._id %>/edit" method="POST" novalidate class="needs-validation">
     
     <!-- Phone -->
     <div class="mb-3">
@@ -32,7 +32,45 @@
       <input type="text" name="address[pincode]" id="pincode" class="form-control" value="<%= currUser.address?.pincode || '' %>">
     </div>
 
+    <!-- Phone -->
+    <div class="mb-3">
+      <label for="phone" class="form-label">Phone</label>
+      <input type="text" name="phone" id="phone" class="form-control" value="<%= currUser.phone %>" required>
+    </div>
+
+    <!-- User Type -->
+    <div class="mb-3">
+  <label for="userType" class="form-label">User Type</label>
+  <select name="userType" id="userType" class="form-select" required>
+    <option value="vendor" <%= currUser.userType === 'vendor' ? 'selected' : '' %>>Vendor</option>
+    <option value="supplier" <%= currUser.userType === 'supplier' ? 'selected' : '' %>>Supplier</option>
+  </select>
+  </div>
+
+
     <button type="submit" class="btn btn-primary">Update Profile</button>
   </form>
 </div>
 
+<style>
+  .cont-form {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 20px;
+  }
+
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    font-weight: bold;
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+</style>
