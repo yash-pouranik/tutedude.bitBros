@@ -61,14 +61,15 @@ router.post("/supplier/:supplierId/add-product", upload.none(), async (req, res)
 router.get("/product/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await Product.findById(id)
-      .populate("supplierId"); // 👈 Added this line
+    const product = await Product.findById(id).populate("supplierId");
 
     if (!product) {
       return res.status(404).send("Product not found");
     }
 
-    res.render("product/allProducts", { product });
+    res.render("product/allProducts", {
+      product
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send("Something went wrong");
@@ -76,13 +77,13 @@ router.get("/product/:id", async (req, res) => {
 });
 
 
+
+
 router.get('/supplier/manage-products/:id', async (req, res) => {
   try {
     const allProducts = await Product.find({ supplierId: req.params.id }).populate("supplierId");
 
-    res.render('product/manageProducts', {
-      allProducts,
-    });
+    res.render("product/allProducts", { product, currUser: req.user });
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
