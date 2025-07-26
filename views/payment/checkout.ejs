@@ -1,0 +1,50 @@
+<% layout("layouts/boilerplate") -%>
+
+<style>
+  .payment-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 40px;
+  }
+
+  .payment-box {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .rzp-button {
+    background-color: #3399cc !important;
+    color: white !important;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+  }
+</style>
+
+<div class="payment-container">
+  <div class="payment-box">
+    <h2 style="margin-bottom: 24px;">Complete Your Payment</h2>
+    <form action="/verify-payment" method="POST">
+      <script
+        src="https://checkout.razorpay.com/v1/checkout.js"
+        data-key="<%= key_id %>"
+        data-amount="<%= order.amount %>"
+        data-currency="INR"
+        data-order_id="<%= order.id %>"
+        data-name="Vendor Order Payment"
+        data-description="Complete your order"
+        data-prefill.name="<%= user.name %>"
+        data-prefill.email="<%= user.email %>"
+        data-theme.color="#3399cc"
+      ></script>
+      <input type="hidden" name="hidden" value="true">
+    </form>
+  </div>
+</div>
