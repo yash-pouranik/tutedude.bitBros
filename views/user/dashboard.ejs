@@ -4,9 +4,6 @@
   <h1 class="mb-3">Welcome, <%= currUser?.username || "User" %>!</h1>
   
   <div class="user-info-card">
-    <form action="/profile/edit/<%= currUser._id %>" method="get">
-      <button type="submit" class="btn btn-danger">edit?</button>
-    </form>
     <h2>Your Profile</h2>
     <hr>
     <ul>
@@ -23,17 +20,20 @@
         <%= currUser?.createdAt ? currUser.createdAt.toDateString() : "N/A" %>
       </li>
     </ul>
+    <form action="/profile/edit/<%= currUser._id %>" method="get">
+      <button type="submit" class="btn btn-danger col-1">Edit</button>
+    </form>
   </div>
 
   <div class="dashboard-actions">
     <% if (currUser.userType === 'supplier') { %>
-      <a href="/supplier/add-product" class="btn col-5 mb-2">Add New Product</a>
-      <a href="/supplier/products" class="btn col-5 mb-2">Manage Products</a>
+      <a href="/supplier/add-product" class="btn col-2 mb-2">Add New Product</a>
+      <a href="/supplier/products" class="btn col-2 mb-2">Manage Products</a>
+      <a href="/vendor/requests" class="btn col-2 mb-2">View Requests</a>
     <% } %>
 
     <% if (currUser.userType === 'vendor') { %>
-      <a href="/vendor/requests" class="btn col-5 mb-2">View Requests</a>
-      <a href="/vendor/orders" class="btn col-5 mb-2">My Orders</a>
+      <a href="/vendor/orders" class="btn col-2 mb-2">My Orders</a>
     <% } %>
   </div>
 
