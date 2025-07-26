@@ -1,33 +1,36 @@
-  .card-header {
-  font-size: 1.2rem;
-}
-
-.btn {
-  border-radius: 10px;
-  font-weight: 500;
-}
-
-.btn:hover {
-  opacity: 0.9;
-}
-
-ul.list-group-flush li {
-  background: #f8f9fa;
-}
-
 .welcome-heading {
-  font-size: 2.2rem;
-  font-weight: bold;
-  color: #333;
-  text-align: center;
-  margin-top: 20px;
-  background: linear-gradient(90deg, #1c1915, #d34512);
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #ff7e5f, #feb47b);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  position: relative;
+  display: inline-block;
+  margin-bottom: 0.3rem;
 }
 
 .welcome-heading span {
-  color: #111;
+  color: #333;
   font-weight: 600;
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(90deg, #1d3557, #457b9d);
+}
+
+.profile-card {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.btn.dashboard-btn {
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 12px;
+  border-radius: 12px;
+  transition: transform 0.2s ease;
+}
+
+.btn.dashboard-btn:hover {
+  transform: translateY(-3px);
+  opacity: 0.95;
 }

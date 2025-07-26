@@ -1,65 +1,76 @@
 <% layout("layouts/boilerplate") %>
 
-
-<div class="container mt-5 mb-5">
-  <h1 class="welcome-heading mb-4">
-  👋 Welcome, <span><%= currUser?.username || "User" %></span>!
-  </h1>
-
+<div class="container py-5">
+  <div class="text-center mb-5">
+    <h1 class="welcome-heading">
+      👋 Welcome, <span><%= currUser?.username || "User" %></span>!
+    </h1>
+    <p class="text-muted">Here’s a quick overview of your profile and options.</p>
+  </div>
 
   <% if (currUser) { %>
-    <!-- Profile Info Card -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header bg-primary text-white">
-        <h5 class="mb-0">Your Profile</h5>
+    <!-- Profile Card -->
+    <div class="card profile-card shadow mb-5">
+      <div class="card-header text-white bg-gradient-primary">
+        <h5 class="mb-0"><i class="bi bi-person-circle me-2"></i>Your Profile</h5>
       </div>
       <div class="card-body">
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item"><strong>Phone:</strong> <%= currUser.phone || "N/A" %></li>
-          <li class="list-group-item"><strong>User Type:</strong> <%= currUser.userType || "N/A" %></li>
-          <li class="list-group-item"><strong>Address:</strong> 
-            <%= currUser.address?.street || "" %>,
-            <%= currUser.address?.city || "" %>,
-            <%= currUser.address?.state || "" %>,
-            <%= currUser.address?.pincode || "" %>
-          </li>
-          <li class="list-group-item"><strong>Registered On:</strong> 
-            <%= currUser.createdAt ? currUser.createdAt.toDateString() : "N/A" %>
-          </li>
-        </ul>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <p><strong>📞 Phone:</strong> <%= currUser.phone || "N/A" %></p>
+            <p><strong>👤 User Type:</strong> <%= currUser.userType || "N/A" %></p>
+          </div>
+          <div class="col-md-6">
+            <p><strong>📍 Address:</strong><br>
+              <%= currUser.address?.street || "" %>,
+              <%= currUser.address?.city || "" %>,
+              <%= currUser.address?.state || "" %>,
+              <%= currUser.address?.pincode || "" %>
+            </p>
+            <p><strong>🗓️ Registered:</strong> <%= currUser.createdAt ? currUser.createdAt.toDateString() : "N/A" %></p>
+          </div>
+        </div>
         <div class="text-end mt-3">
           <a href="/profile/edit/<%= currUser._id %>" class="btn btn-outline-danger btn-sm">Edit Profile</a>
         </div>
       </div>
     </div>
 
-    <!-- Actions -->
-    <div class="row g-3">
+    <!-- Action Buttons -->
+    <div class="row g-4">
       <% if (currUser.userType === 'supplier') { %>
         <div class="col-md-4">
-          <a href="/supplier/add-product" class="btn btn-success w-100">Add New Product</a>
+          <a href="/supplier/add-product" class="btn dashboard-btn bg-success text-white w-100">
+            ➕ Add New Product
+          </a>
         </div>
         <div class="col-md-4">
-          <a href="/supplier/manage-products/<%= currUser._id %>" class="btn btn-primary w-100">Manage Products</a>
+          <a href="/supplier/manage-products/<%= currUser._id %>" class="btn dashboard-btn bg-primary text-white w-100">
+            🛒 Manage Products
+          </a>
         </div>
         <div class="col-md-4">
-          <a href="/supplier/orders" class="btn btn-dark w-100">View Requests</a>
+          <a href="/supplier/orders" class="btn dashboard-btn bg-dark text-white w-100">
+            📦 View Requests
+          </a>
         </div>
       <% } %>
 
       <% if (currUser.userType === 'vendor') { %>
         <div class="col-md-6 offset-md-3">
-          <a href="/vendor/orders" class="btn btn-info w-100">Order History</a>
+          <a href="/vendor/orders" class="btn dashboard-btn bg-info text-white w-100">
+            🧾 Order History
+          </a>
         </div>
       <% } %>
     </div>
-
   <% } else { %>
-    <div class="alert alert-warning mt-4 text-center">
-      Please <a href="/login">log in</a> to view your dashboard.
+    <div class="alert alert-warning text-center mt-4">
+      Please <a href="/login" class="alert-link">log in</a> to view your dashboard.
     </div>
   <% } %>
 </div>
+
 
 
 
