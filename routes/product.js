@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { isSupplier, isLoggedIn } = require('../middlewares');
+const { isSupplier, isLoggedIn, isOwner } = require('../middlewares');
 
 
 const multer = require("multer");
@@ -143,9 +143,35 @@ router.post("/cart/add/:productId", isLoggedIn, async (req, res) => {
   }
 });
 
+// routes/products.js or similar
 
+router.get('/products/:id/edit', isLoggedIn, isSupplier, isOwner, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await Product.findById(id);
 
+    if (!product) {
+      req.flash('error', 'Product not found');
+      return res.redirect('/product/allProducts');
+    }
 
+    res.render('product/editProductForm', { product });
+  } catch (err) {
+    console.error('Error fetching product:', err);
+    req.flash('error', 'Something went wrong');
+    res.redirect('/product/:id');
+  }
+});
 
+router.get('/products/allProducts', isLoggedIn, isSupplier, async (req, res) => {
+  try {
+    const products = await Product.find({ supplierId: req.session.user._id });
+    res.render('product/allProducts', { products, currUser: req.session.user });
+  } catch (err) {
+    console.error('Error fetching all products:', err);
+    req.flash('error', 'Could not fetch products');
+    res.redirect('/dashboard');
+  }
+});
 
 module.exports = router;

@@ -1,4 +1,5 @@
 const User = require("./model/user");
+const Product = require("./model/product");
 
 module.exports.setLocals = async (req, res, next) => {
   try {
@@ -45,4 +46,28 @@ module.exports.isSupplier = (req, res, next) => {
   } else {
     return res.status(403).send('Access denied. Only vendors allowed.');
   }
+};
+
+const mongoose = require('mongoose');
+
+module.exports.isOwner = async (req, res, next) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    req.flash('error', 'Invalid product ID');
+    return res.redirect('/products/allProducts');
+  }
+
+  const product = await Product.findById(id);
+  if (!product) {
+    req.flash('error', 'Product not found');
+    return res.redirect('/products/allProducts');
+  }
+  
+if (!product.supplierId.equals(req.session.user._id)) {
+  req.flash('error', 'You are not the owner of this product');
+  return res.redirect('/products/allProducts');
+}
+
+  next();
 };

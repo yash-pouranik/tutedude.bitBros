@@ -97,8 +97,6 @@ app.get("/", (req, res) => {
     res.render("templates/home.ejs");
 });
 
-
-
 app.get("/dashboard", (req, res)=>{
     res.render("user/dashboard.ejs");
 });
