@@ -1,0 +1,35 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container my-5">
+  <div class="card shadow-lg border-0">
+    <div class="row g-0">
+      <div class="col-md-5 text-center p-4">
+        <img src="<%= product.imageUrl %>" alt="<%= product.name %>" class="img-fluid rounded" style="max-height: 300px; object-fit: contain;">
+      </div>
+      <div class="col-md-7 p-4">
+        <h2 class="mb-3 fw-bold text-primary"><%= product.name %></h2>
+
+        <p><span class="fw-semibold">Description:</span> <%= product.description || "N/A" %></p>
+        <p><span class="fw-semibold">Type:</span> <%= product.type %></p>
+
+        <% if (product.type === "fresh") { %>
+          <p><span class="fw-semibold">Category:</span> <%= product.freshCategory %></p>
+        <% } %>
+
+        <p>
+          <span class="fw-semibold">Price:</span>
+          ₹<%= product.price %> per <%= product.unit %>
+        </p>
+        <p><span class="fw-semibold">Quantity Available:</span> <%= product.quantity %></p>
+        <p><span class="fw-semibold">Available:</span> 
+          <span class="<%= product.availability ? 'text-success' : 'text-danger' %>">
+            <%= product.availability ? "Yes" : "No" %>
+          </span>
+        </p>
+        <p><strong>Owner:</strong> <%= product.supplierId?.name || "N/A" %></p>
+
+        <p><span class="fw-semibold">Added On:</span> <%= product.createdAt.toDateString() %></p>
+      </div>
+    </div>
+  </div>
+</div>
