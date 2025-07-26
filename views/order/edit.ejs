@@ -1,0 +1,26 @@
+<% layout("layouts/boilerplate") -%>
+
+<div class="container my-5">
+  <h2 class="text-center text-primary mb-4">📝 Edit Order</h2>
+  <form action="/orders/<%= order._id %>?_method=PUT" method="POST">
+    <div class="mb-3">
+      <label class="form-label">Order Status</label>
+      <select name="status" class="form-select" required>
+        <% ["Pending", "Accepted", "Shipped", "Delivered", "Cancelled"].forEach(s => { %>
+          <option value="<%= s %>" <%= order.status === s ? "selected" : "" %>><%= s %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Payment Status</label>
+      <select name="paymentStatus" class="form-select" required>
+        <% ["Pending", "Paid", "Failed"].forEach(p => { %>
+          <option value="<%= p %>" <%= order.paymentStatus === p ? "selected" : "" %>><%= p %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Order</button>
+  </form>
+</div>
