@@ -1,21 +1,60 @@
-<footer class="bg-dark text-white py-3 mt-auto">
-  <div class="container text-center text-md-start">
-    <div class="row justify-content-between">
-      <!-- Quick Links -->
-      <div class="col-md-6 mb-2">
-        <h6 class="fw-bold mb-2">Quick Links</h6>
-        <a href="/about" class="text-white text-decoration-none me-3">About Us</a>
-        <a href="/terms" class="text-white text-decoration-none me-3">Terms & Conditions</a>
-        <a href="/privacy" class="text-white text-decoration-none me-3">Privacy Policy</a>
-        <a href="/contact" class="text-white text-decoration-none">Contact Us</a>
+<footer class="footer bg-dark text-white py-4 mt-auto">
+  <div class="container">
+    <div class="row align-items-center gy-3">
+      
+      <!-- Brand -->
+      <div class="col-md-4 text-center text-md-start">
+        <h5 class="fw-bold mb-1">🛍️ Gully Bazaar</h5>
+        <p class="small mb-0">Connecting vendors & buyers, one street at a time.</p>
       </div>
 
-      <!-- Info -->
-      <div class="col-md-6 mb-2 text-md-end">
-        <small>&copy; <%= new Date().getFullYear() %> Apna Bazaar. All rights reserved.</small>
+      <!-- Quick Links -->
+      <div class="col-md-4 text-center">
+        <h6 class="fw-semibold mb-2">Quick Links</h6>
+        <ul class="list-inline mb-0">
+          <li class="list-inline-item"><a href="/about" class="footer-link">About</a></li>
+          <li class="list-inline-item"><a href="/terms" class="footer-link">Terms</a></li>
+          <li class="list-inline-item"><a href="/privacy" class="footer-link">Privacy</a></li>
+          <li class="list-inline-item"><a href="/contact" class="footer-link">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Copyright -->
+      <div class="col-md-4 text-center text-md-end">
+        <small class="d-block">&copy; <%= new Date().getFullYear() %> Apna Bazaar</small>
+        <small>All rights reserved.</small>
       </div>
     </div>
   </div>
 </footer>
 
+<style>
+  .footer {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #111;
+  color: #ddd;
+  border-top: 1px solid #333;
+}
 
+.footer-link {
+  color: #ff914d;
+  text-decoration: none;
+  margin: 0 8px;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.footer-link:hover {
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .footer h5, .footer h6, .footer p, .footer small {
+    text-align: center !important;
+  }
+  .footer ul {
+    padding-left: 0;
+  }
+}
+
+</style>

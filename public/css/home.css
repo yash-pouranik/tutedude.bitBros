@@ -1,79 +1,128 @@
-body{
-  font-family: "Winky Rough", sans-serif;
-}
-
-/* home */
-.heading{
-  font-size: 2rem;
-  font-family: "Intel-One", sans-serif;
-  font-weight: 400;
-}
-
+/* Hero Section Styling */
 .hero {
-  background-image: url('/images/hero-bg.jpg');
-  color: white;
-  padding: 6rem 2rem;
-  text-align: center;
-  font-weight: 400;
+  background-image: url('../images/hero.jpeg');
+  background-size: cover;
+  background-position: center;
+  height: 90vh;
+  padding: 60px 0;
+  position: relative;
 }
 
-.hero-content h1 {
-  font-size: 3rem;
-  margin-bottom: 0.5rem;
+/* Logo Styling with Hover & Animation */
+.hero-logo {
+  height: 160px;
+  border-radius: 50px;
+  transition: transform 0.6s ease;
+  animation: floatLogo 3s ease-in-out infinite;
 }
 
-.hero-content p {
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
+.hero-logo:hover {
+  transform: scale(1.05) rotate(2deg);
 }
 
-.btn-primary {
-  background-color: #ff9800;
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  text-decoration: none;
+/* Floating Logo Animation */
+@keyframes floatLogo {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Spin Text Styling */
+.spin-container {
+  background-color: aliceblue;
+  opacity: 0.7;
+  font-size: 1.6rem;
   font-weight: bold;
+  border-radius: 20px;
+  color: #230000;
 }
 
-.features {
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  padding: 3rem 1rem;
-  background: #f7f7f7;
+/* Button Enhancement */
+.shopbtn {
+  font-size: 1.1rem;
+  transition: all 0.3s ease-in-out;
 }
 
-.feature {
-  text-align: center;
-  max-width: 300px;
-  margin: 1rem;
+.shopbtn:hover {
+  background-color: #ff0000;
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(255, 193, 7, 0.6);
 }
 
-.feature i {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-  color: #ff9800;
-}
-
-.cta-section {
-  text-align: center;
-  padding: 3rem 1rem;
-  background-color: #1e1919;
+.feature-card {
+  background-color: rgba(0, 0, 0, 0.6);
   color: #fff;
+  backdrop-filter: blur(5px);
+  border-radius: 20px;
+  padding: 2rem;
+  text-align: center;
+  transform: scale(0.8);
+  opacity: 0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.btn-secondary {
-  background-color: transparent;
-  border: 2px solid #ff9800;
-  padding: 0.6rem 1.2rem;
-  color: #ff9800;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: bold;
+/* When visible */
+.feature-card.show {
+  animation: cardPop 0.6s ease-out forwards;
 }
 
-.btn-secondary:hover {
-  background-color: #00ff62;
-  color: rgb(29, 167, 45);
+@keyframes cardPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.feature-card:hover {
+  transform: scale(1.03) translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+
+/* === CTA SECTION === */
+.cta-section {
+  background-color: #ffeede;
+  padding: 5rem 1rem;
+  text-align: center;
+}
+
+/* Animate button entrance */
+.cta-btn {
+  padding: 0.75rem 2.5rem;
+  border: 2px solid #fd7e14;
+  color: #fd7e14;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0); /* start with no shadow */
+  transform: scale(1);
+}
+
+/* Hover effects */
+.cta-btn:hover {
+  background-color: #fd7e14;
+  color: #fff;
+  transform: scale(1.08);
+  box-shadow: 0 8px 24px rgba(253, 126, 20, 0.4); /* warm glow */
+}
+
+/* Optional: subtle animation on load */
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.cta-btn {
+  animation: popIn 0.6s ease-in-out both;
 }

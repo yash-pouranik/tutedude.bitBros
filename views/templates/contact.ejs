@@ -20,6 +20,7 @@
 
 <style>
   .contact-section {
+    font-family: "Winky Rough", sans-serif;
     max-width: 700px;
     margin: 2rem auto;
     padding: 2rem;
@@ -53,7 +54,7 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 1rem;
-    font-family: inherit;
+    font-family: "Winky Rough", sans-serif;
   }
 
   .contact-form button {
@@ -70,4 +71,22 @@
   .contact-form button:hover {
     background-color: #0056b3;
   }
+  .contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 3px rgba(0, 123, 255, 0.3);
+}
+@media (max-width: 480px) {
+  .contact-section {
+    padding: 1rem;
+  }
+}
+.contact-form button {
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+.contact-form button:hover {
+  transform: translateY(-1px);
+}
+
 </style>

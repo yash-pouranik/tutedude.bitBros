@@ -4,7 +4,7 @@
   <div class="container">
 
     <!-- 🧭 Filter Nav -->
-    <nav class="top-filter-nav mt-3">
+    <nav class="top-filter-nav mt-4">
       <ul class="filter-nav-list">
         <li><a href="#" class="filter-link active" onclick="showSection('all')">🥕 All</a></li>
         <li><a href="#" class="filter-link" onclick="showSection('fresh')">🌱 Fresh</a></li>
@@ -14,7 +14,7 @@
 
     <!-- 📦 All Products -->
     <div id="all-section" class="item-section">
-      <h2>All Products</h2>
+      <h2 class="section-title">All Products</h2>
       <% if (allProducts.length === 0) { %>
         <p class="placeholder">No products to show yet.</p>
       <% } else { %>
@@ -28,8 +28,6 @@
                 <div class="product-details">
                   <h3><%= p.name %></h3>
                   <p class="price">₹<%= p.price %> per <%= p.unit %></p>
-                 
-                  
                 </div>
               </div>
             </a>
@@ -40,7 +38,7 @@
 
     <!-- 🥬 Fresh Section -->
     <div id="fresh-section" class="item-section hidden">
-      <h2>Fresh Products</h2>
+      <h2 class="section-title">Fresh Products</h2>
       <div class="fresh-filter-buttons">
         <button onclick="filterFresh('all')" class="fresh-btn active">All</button>
         <button onclick="filterFresh('veggies')" class="fresh-btn">Veggies</button>
@@ -56,7 +54,6 @@
               <div class="product-details">
                 <h3><%= p.name %></h3>
                 <p class="price">₹<%= p.price %> per <%= p.unit %></p>
-                
               </div>
             </div>
           </a>
@@ -66,7 +63,7 @@
 
     <!-- 📦 Packed Section -->
     <div id="packed-section" class="item-section hidden">
-      <h2>Packed Products</h2>
+      <h2 class="section-title">Packed Products</h2>
       <% if (packedProducts.length === 0) { %>
         <p class="placeholder">No packed products available yet.</p>
       <% } else { %>
@@ -80,7 +77,6 @@
                 <div class="product-details">
                   <h3><%= p.name %></h3>
                   <p class="price">₹<%= p.price %> per <%= p.unit %></p>
-                  
                 </div>
               </div>
             </a>
@@ -92,7 +88,6 @@
   </div>
 </section>
 
-<!-- JavaScript -->
 <script>
   function showSection(type) {
     const sections = {
@@ -116,51 +111,95 @@
     event.target.classList.add("active");
 
     items.forEach(item => {
-      if (type === "all") {
-        item.style.display = "block";
-      } else {
-        item.style.display = item.classList.contains(type) ? "block" : "none";
-      }
+      item.style.display = (type === "all" || item.classList.contains(type)) ? "block" : "none";
     });
   }
 </script>
 
-<!-- CSS -->
 <style>
   body {
     font-family: 'Segoe UI', sans-serif;
-    background-color: #f9f9f9;
+    background: linear-gradient(to bottom, #fffdf5, #fef6eb);
+    margin: 0;
+  }
+
+  .shopping-page .container {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+  }
+
+  .section-title {
+    font-weight: 600;
+    font-size: 1.8rem;
+    color: #222;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  /* Filter Navigation */
+  .top-filter-nav {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+
+  .filter-nav-list {
+    display: flex;
+    gap: 15px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+  }
+
+  .filter-link {
+    text-decoration: none;
+    padding: 10px 22px;
+    background: #f0f0f0;
+    border-radius: 30px;
+    color: #333;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06);
+  }
+
+  .filter-link:hover {
+    background-color: #ffe8b3;
+    color: #e67e22;
+  }
+
+  .filter-link.active {
+    background-color: #ffa94d;
+    color: white;
+    box-shadow: 0 6px 12px rgba(255, 153, 0, 0.3);
   }
 
   .product-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    justify-content: center;
-    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 26px;
   }
 
   .product-card-link {
     text-decoration: none;
     color: inherit;
-    transition: transform 0.2s;
   }
 
   .product-card {
     background: #fff;
-    border-radius: 16px;
+    border-radius: 18px;
     overflow: hidden;
-    width: 240px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease-in-out;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
     display: flex;
     flex-direction: column;
     height: 100%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8) !important;
   }
 
   .product-card:hover {
     transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.1);
   }
 
   .product-img img {
@@ -171,73 +210,70 @@
   }
 
   .product-card:hover .product-img img {
-    transform: scale(1.05);
+    transform: scale(1.06);
   }
 
   .product-details {
-    padding: 16px;
+    padding: 15px 18px;
   }
 
   .product-details h3 {
     font-size: 1.2rem;
+    font-weight: 600;
     margin-bottom: 8px;
-    color: #333;
+    color: #222;
   }
 
-  .product-details .price {
-    color: #2a9d8f;
+  .price {
+    color: #2b9348;
     font-weight: bold;
-    margin-bottom: 6px;
-  }
-
-  .product-details .desc {
-    font-size: 0.95rem;
-    color: #666;
-  }
-
-  .filter-link.active {
-    font-weight: bold;
-    color: green;
-  }
-
-  .filter-nav-list {
-    display: flex;
-    gap: 10px;
-    list-style: none;
-    padding: 0;
-  }
-
-  .filter-link {
-    text-decoration: none;
-    padding: 8px 14px;
-    background: #eee;
-    border-radius: 5px;
+    font-size: 1.05rem;
   }
 
   .placeholder {
-    color: #888;
+    color: #aaa;
+    text-align: center;
     font-style: italic;
+    margin-top: 1.5rem;
   }
 
   .hidden {
     display: none;
   }
 
+  /* Fresh Subfilters */
   .fresh-filter-buttons {
-    margin: 15px 0;
+    margin: 20px 0;
+    text-align: center;
   }
 
   .fresh-btn {
-    padding: 8px 16px;
-    background-color: #7DC97D;
-    color: white;
+    padding: 8px 18px;
+    margin: 5px;
     border: none;
-    margin-right: 10px;
-    cursor: pointer;
-    border-radius: 5px;
+    border-radius: 25px;
+    background: #88d498;
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .fresh-btn:hover {
+    background-color: #57cc99;
   }
 
   .fresh-btn.active {
-    background-color: #4CAF50;
+    background-color: #2a9d8f;
+  }
+
+  @media (max-width: 576px) {
+    .filter-nav-list {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .product-img img {
+      height: 160px;
+    }
   }
 </style>
+

@@ -28,42 +28,48 @@
 <style>
   .about-container {
   max-width: 800px;
-  margin: 2rem auto; /* centers horizontally */
-  padding: 2rem;
-  font-family: "Segoe UI", sans-serif;
-  background-color: #f9f9f9;
+  margin: 2rem auto;
+  padding: 2.5rem 2rem;
+  font-family: "Winky Rough", sans-serif;
+  background: linear-gradient(135deg, #ffffff, #f7f7f7);
   color: #333;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
   width: 90%;
+  transition: all 0.3s ease-in-out;
 }
 
 .about-container h1 {
   text-align: center;
-  margin-bottom: 0.5rem;
-  font-size: 2.5rem;
-  color: #444;
+  font-size: 2.8rem;
+  color: #333;
+  margin-bottom: 0.3rem;
+  letter-spacing: 1px;
 }
 
 .tagline {
   text-align: center;
   font-style: italic;
-  color: #777;
-  margin-bottom: 2rem;
+  color: #888;
+  font-size: 1.1rem;
+  margin-bottom: 2.2rem;
 }
 
 .section {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .section h2 {
-  color: #222;
-  margin-bottom: 0.5rem;
+  font-size: 1.6rem;
+  color: #1a1a1a;
+  margin-bottom: 0.7rem;
 }
 
-.section p, .section ul {
-  line-height: 1.6;
-  color: #555;
+.section p,
+.section ul {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #4a4a4a;
 }
 
 .section ul {
@@ -72,15 +78,17 @@
 }
 
 .section li {
-  margin-bottom: 0.5rem;
-  padding-left: 1rem;
+  margin-bottom: 0.6rem;
+  padding-left: 1.5rem;
   position: relative;
 }
 
 .section li::before {
-  content: "•";
-  color: #ff5722;
+  content: "✔";
+  color: #28a745;
   position: absolute;
   left: 0;
+  font-weight: bold;
 }
+
 </style>
