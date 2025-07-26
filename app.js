@@ -10,6 +10,8 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
 const flash = require("connect-flash");
+require('dotenv').config();
+
 
 
 //for images
