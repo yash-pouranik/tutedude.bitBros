@@ -1,0 +1,59 @@
+<% layout("layouts/boilerplate") -%>
+
+<style>
+  .add-cart-container {
+    max-width: 600px;
+    margin: 3rem auto;
+    background: linear-gradient(135deg, #fdfbfb, #ebedee);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .add-cart-container h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+  }
+
+  .add-cart-container label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: #333;
+  }
+
+  .add-cart-container input[type="number"] {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .add-cart-container button {
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    width: 100%;
+    transition: background-color 0.3s ease;
+  }
+
+  .add-cart-container button:hover {
+    background-color: #ff523b;
+  }
+</style>
+
+<div class="add-cart-container">
+  <h2>Add to Cart</h2>
+  <form action="/cart/add/<%= product._id %>" method="POST">
+    <label for="quantity">Quantity</label>
+    <input type="number" name="quantity" id="quantity" min="1" value="1" required>
+
+    <button type="submit">🛒 Add to Cart</button>
+  </form>
+</div>

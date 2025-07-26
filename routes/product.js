@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { isSupplier } = require('../middlewares');
+const { isSupplier, isLoggedIn } = require('../middlewares');
 
 
 const multer = require("multer");
@@ -17,6 +17,7 @@ router.get('/supplier/add-product', isSupplier, (req, res) => {
 
 const Supplier = require("../model/user");
 const Product = require("../model/product");
+const Cart = require("../model/cart");
 
 // POST: Add a new product for a supplier
 router.post("/supplier/:supplierId/add-product", upload.none(), async (req, res) => {
@@ -87,6 +88,61 @@ router.get('/supplier/manage-products/:id', async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
+
+router.get("/product/:id/addCart", async(req,res)=>{
+  const product = await Product.findById(req.params.id);
+res.render("order/addcart", { product });
+});
+
+router.get("/cart/view", isLoggedIn, async (req, res) => {
+  try {
+    const cart = await Cart.findOne({ userId: req.session.user._id })
+      .populate("items.productId"); // Populate full product details
+
+    res.render("order/showcart", { cart });
+  } catch (err) {
+    console.error("Error fetching cart:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+
+router.post("/cart/add/:productId", isLoggedIn, async (req, res) => {
+  try {
+    const userId = req.session.user._id; // Or however you store the logged-in user
+    const productId = req.params.productId;
+    const quantity = parseInt(req.body.quantity) || 1;
+
+    // Check if the user already has a cart
+    let cart = await Cart.findOne({ userId });
+
+    if (!cart) {
+      // If no cart exists, create a new one
+      cart = new Cart({
+        userId,
+        items: [{ productId, quantity }]
+      });
+    } else {
+      // If cart exists, check if product is already in it
+      const itemIndex = cart.items.findIndex(item => item.productId.equals(productId));
+      if (itemIndex > -1) {
+        // Product exists in cart, update quantity
+        cart.items[itemIndex].quantity += quantity;
+      } else {
+        // Product not in cart, add new item
+        cart.items.push({ productId, quantity });
+      }
+    }
+
+    await cart.save();
+    res.redirect("/cart/view"); // Redirect to cart view page
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Something went wrong while adding to cart.");
+  }
+});
+
+
 
 
 
