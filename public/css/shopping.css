@@ -1,4 +1,8 @@
- .top-filter-nav {
+body{
+  font-family: "Winky Rough", sans-serif;
+}
+
+.top-filter-nav {
     background: linear-gradient(to right, #a0e0af, #61abf5);
     padding: 1rem 0;
     margin-bottom: 2rem;

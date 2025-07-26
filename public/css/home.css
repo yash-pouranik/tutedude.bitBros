@@ -1,3 +1,7 @@
+body{
+  font-family: "Winky Rough", sans-serif;
+}
+
 /* home */
 .heading{
   font-size: 2rem;
@@ -6,7 +10,7 @@
 }
 
 .hero {
-  background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('/images/market.jpg') no-repeat center center/cover;
+  background-image: url('/images/hero-bg.jpg');
   color: white;
   padding: 6rem 2rem;
   text-align: center;

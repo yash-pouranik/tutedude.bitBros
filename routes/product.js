@@ -76,14 +76,11 @@ router.get("/product/:id", async (req, res) => {
   }
 });
 
-
-
-
 router.get('/supplier/manage-products/:id', async (req, res) => {
   try {
     const allProducts = await Product.find({ supplierId: req.params.id }).populate("supplierId");
 
-    res.render("product/allProducts", { product, currUser: req.user });
+    res.render("product/manageProducts", { allProducts, currUser: req.session.user });
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -143,6 +140,28 @@ router.post("/cart/add/:productId", isLoggedIn, async (req, res) => {
   }
 });
 
+router.post("/cart/remove/:productId", isLoggedIn, async (req, res) => {
+  try {
+    const userId = req.session.user._id;
+    const productId = req.params.productId;
+
+    // Find user's cart
+    const cart = await Cart.findOne({ userId });
+
+    if (!cart) return res.redirect("/cart/view");
+
+    // Filter out the product from cart
+    cart.items = cart.items.filter(item => !item.productId.equals(productId));
+
+    await cart.save();
+    res.redirect("/cart/view");
+  } catch (err) {
+    console.error("Error removing item from cart:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+
 // routes/products.js or similar
 
 router.get('/products/:id/edit', isLoggedIn, isSupplier, isOwner, async (req, res) => {
@@ -152,25 +171,14 @@ router.get('/products/:id/edit', isLoggedIn, isSupplier, isOwner, async (req, re
 
     if (!product) {
       req.flash('error', 'Product not found');
-      return res.redirect('/product/allProducts');
+      return res.redirect('/shopping');
     }
 
     res.render('product/editProductForm', { product });
   } catch (err) {
     console.error('Error fetching product:', err);
     req.flash('error', 'Something went wrong');
-    res.redirect('/product/:id');
-  }
-});
-
-router.get('/products/allProducts', isLoggedIn, isSupplier, async (req, res) => {
-  try {
-    const products = await Product.find({ supplierId: req.session.user._id });
-    res.render('product/allProducts', { products, currUser: req.session.user });
-  } catch (err) {
-    console.error('Error fetching all products:', err);
-    req.flash('error', 'Could not fetch products');
-    res.redirect('/dashboard');
+    res.redirect('/shopping');
   }
 });
 
