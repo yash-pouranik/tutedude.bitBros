@@ -43,13 +43,12 @@
         </div>
 
         <div class="mb-3">
-        <label for="category" class="form-label">Category</label>
-        <select id="category" name="product[category]" class="form-select" required>
-    <option value="Fresh" <%= product.category === 'Fresh' ? 'selected' : '' %>>Fresh</option>
-    <option value="Packed" <%= product.category === 'Packed' ? 'selected' : '' %>>Packed</option>
-        </select>
+          <label for="category" class="form-label">Category</label>
+          <select id="category" name="product[category]" class="form-select" required>
+            <option value="Fresh" <%= product.category === 'Fresh' ? 'selected' : '' %>>Fresh</option>
+            <option value="Packed" <%= product.category === 'Packed' ? 'selected' : '' %>>Packed</option>
+          </select>
         </div>
-
 
         <!-- Add more fields as needed -->
 
