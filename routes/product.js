@@ -60,12 +60,14 @@ router.post("/supplier/:supplierId/add-product", upload.none(), async (req, res)
 router.get("/product/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await Product.findById(id)
-      .populate("supplierId"); // 👈 Added this line
+    const product = await Product.findById(id).populate("supplierId");
 
     if (!product) {
       return res.status(404).send("Product not found");
     }
+
+    console.log("currUser._id:", req.user._id);
+    console.log("product.supplierId:", product.supplierId);
 
     res.render("product/allProducts", { product });
   } catch (err) {
