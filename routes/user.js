@@ -1,121 +1,140 @@
 const express = require("express");
 const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync");
-const User = require("../model/user")
-const {isLoggedIn} = require("../middlewares")
+const User = require("../model/user");
+const { isLoggedIn } = require("../middlewares");
+const axios = require("axios");
 
-//otp
-const otpStore = new Map();
-
-function generateOTP() {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
-
-// signup route
+// signup form
 router.get("/signup", (req, res) => {
-    res.render("user/signup");
+  res.render("user/signup");
 });
 
-
+// signup logic with Mapbox geocoding
 router.post("/signup", wrapAsync(async (req, res) => {
-    const { username, phone, userType, address } = req.body;
-    const existing = await User.findOne({ phone });
-    if (existing) {
-        req.flash("error", "Phone already registered");
-        return res.redirect("/signup");
-    }
+  const { username, phone, userType, address } = req.body;
 
-    const user = new User({ username, phone, userType, address });
-    await user.save();
-    req.flash("success", "Signup successful! Please login.");
-    res.redirect("/login");
+  const existing = await User.findOne({ phone });
+  if (existing) {
+    req.flash("error", "Phone already registered");
+    return res.redirect("/signup");
+  }
+
+  const fullAddress = `${address.street}, ${address.city}, ${address.state}, ${address.pincode}`;
+
+  let coordinates = [0, 0];
+  try {
+    const geoRes = await axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(fullAddress)}.json`, {
+      params: {
+        access_token: process.env.MAPBOX_TOKEN,
+        limit: 1
+      }
+    });
+
+    coordinates = geoRes.data.features[0]?.geometry?.coordinates || [0, 0];
+  } catch (err) {
+    console.error("Mapbox error:", err);
+  }
+
+  const user = new User({
+    username,
+    phone,
+    userType,
+    address,
+    location: {
+      type: "Point",
+      coordinates
+    }
+  });
+
+  await user.save();
+  req.flash("success", "Signup successful! Please login.");
+  res.redirect("/login");
 }));
 
-
-//login form
+// login form
 router.get("/login", (req, res) => {
-    res.render("user/login");
+  res.render("user/login");
 });
 
-
+// login logic (OTP-based)
 router.post("/login", wrapAsync(async (req, res) => {
-    const { phone } = req.body;
-    const user = await User.findOne({ phone });
+  const { phone } = req.body;
+  const user = await User.findOne({ phone });
 
-    if (!user) {
-        req.flash("error", "Phone not registered");
-        return res.redirect("/login");
-    }
+  if (!user) {
+    req.flash("error", "Phone not registered");
+    return res.redirect("/login");
+  }
 
-    const otpCode = Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
+  const otpCode = Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
 
-    user.otp = {
-        code: otpCode.toString(),
-        expiresAt
-    };
-    await user.save();
+  user.otp = {
+    code: otpCode.toString(),
+    expiresAt
+  };
+  await user.save();
 
-    console.log(`OTP for ${phone}: ${otpCode}`); // replace with SMS API in prod
-
-    req.session.phone = phone; // store temporarily
-    req.flash("success", "OTP sent to your number");
-    res.redirect("/verifyOtp");
+  console.log(`OTP for ${phone}: ${otpCode}`);
+  req.session.phone = phone;
+  req.flash("success", "OTP sent to your number");
+  res.redirect("/verifyOtp");
 }));
 
-// OTP verify page dikhane wala route
+// OTP verify page
 router.get("/verifyOtp", (req, res) => {
   if (!req.session.phone) {
     req.flash("error", "Please login first");
     return res.redirect("/login");
   }
-  res.render("user/verifyOtp"); // Make sure verifyOtp.ejs exists
+  res.render("user/verifyOtp");
 });
 
-
+// OTP verification logic
 router.post("/verify-otp", wrapAsync(async (req, res) => {
-    const { otp } = req.body;
-    const phone = req.session.phone;
+  const { otp } = req.body;
+  const phone = req.session.phone;
 
-    const user = await User.findOne({ phone });
+  const user = await User.findOne({ phone });
 
-    if (!user || !user.otp || user.otp.code !== otp || new Date() > user.otp.expiresAt) {
-        req.flash("error", "Invalid or expired OTP");
-        return res.redirect("/verifyOtp");
-    }
+  if (!user || !user.otp || user.otp.code !== otp || new Date() > user.otp.expiresAt) {
+    req.flash("error", "Invalid or expired OTP");
+    return res.redirect("/verifyOtp");
+  }
 
-    // OTP is valid
-    user.otp = undefined;
-    await user.save();
+  user.otp = undefined;
+  await user.save();
 
-    req.session.user = {
-      _id: user._id,
-      userType: user.userType,
-      name: user.name,
-      phone: user.phone,
-    };
-    req.flash("success", "Logged in successfully");
-    res.redirect("/dashboard");
+  req.session.user = {
+    _id: user._id,
+    userType: user.userType,
+    name: user.name,
+    phone: user.phone,
+  };
+  req.flash("success", "Logged in successfully");
+  res.redirect("/dashboard");
 }));
 
 // logout
 router.get("/logout", isLoggedIn, (req, res) => {
-    req.session.destroy();
-    res.redirect("/");
+  req.session.destroy();
+  res.redirect("/");
 });
 
-router.get("/dashboard", isLoggedIn, (req, res)=>{
-    res.render("user/dashboard.ejs");
+// dashboard
+router.get("/dashboard", isLoggedIn, (req, res) => {
+  res.render("user/dashboard.ejs");
 });
 
+// profile edit form
 router.get('/profile/edit/:id', isLoggedIn, async (req, res) => {
   const user = await User.findById(req.params.id);
   res.render('user/edit', { currUser: user });
 });
 
-
-router.post("/profile/:id/edit", async (req, res) => {
+// profile update with Mapbox geocoding
+router.post("/profile/:id/edit", wrapAsync(async (req, res) => {
   const { id } = req.params;
   let { phone, address, userType } = req.body;
 
@@ -123,21 +142,34 @@ router.post("/profile/:id/edit", async (req, res) => {
     phone = phone[0];
   }
 
+  const fullAddress = `${address.street}, ${address.city}, ${address.state}, ${address.pincode}`;
+
+  let coordinates = [0, 0];
   try {
-    await User.findByIdAndUpdate(id, {
-      phone,
-      address,
-      userType
+    const geoRes = await axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(fullAddress)}.json`, {
+      params: {
+        access_token: process.env.MAPBOX_TOKEN,
+        limit: 1
+      }
     });
 
-    res.redirect("/dashboard"); // or wherever you want
+    coordinates = geoRes.data.features[0]?.geometry?.coordinates || [0, 0];
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error updating profile");
+    console.error("Mapbox error:", err);
   }
-});
 
+  await User.findByIdAndUpdate(id, {
+    phone,
+    address,
+    userType,
+    location: {
+      type: "Point",
+      coordinates
+    }
+  });
 
-
+  res.redirect("/dashboard");
+}));
 
 module.exports = router;
+

@@ -1,40 +1,66 @@
 <% layout("layouts/boilerplate") %>
 
+
 <div class="dashboard-container">
   <h1 class="mb-3">Welcome, <%= currUser?.username || "User" %>!</h1>
   
-  <div class="user-info-card">
-    <h2>Your Profile</h2>
-    <hr>
-    <ul>
-      
-      <li><strong>Phone:</strong> <%= currUser?.phone || "N/A" %></li>
-      <li><strong>User Type:</strong> <%= currUser?.userType || "N/A" %></li>
-      <li><strong>Address:</strong>
-        <%= currUser?.address?.street || "" %>,
-        <%= currUser?.address?.city || "" %>,
-        <%= currUser?.address?.state || "" %>,
-        <%= currUser?.address?.pincode || "" %>
-      </li>
-      <li><strong>Registered On:</strong> 
-        <%= currUser?.createdAt ? currUser.createdAt.toDateString() : "N/A" %>
-      </li>
-    </ul>
-    <form action="/profile/edit/<%= currUser._id %>" method="get">
-      <button type="submit" class="btn btn-danger col-1">Edit</button>
-    </form>
-  </div>
+  <% if (currUser) { %>
+    <div class="user-info-card">
+      <h2>Your Profile</h2>
+      <hr>
+      <ul>
+        <li><strong>Phone:</strong> <%= currUser.phone || "N/A" %></li>
+        <li><strong>User Type:</strong> <%= currUser.userType || "N/A" %></li>
+        <li><strong>Address:</strong>
+          <%= currUser.address?.street || "" %>,
+          <%= currUser.address?.city || "" %>,
+          <%= currUser.address?.state || "" %>,
+          <%= currUser.address?.pincode || "" %>
+        </li>
+        <li><strong>Registered On:</strong> 
+          <%= currUser.createdAt ? currUser.createdAt.toDateString() : "N/A" %>
+        </li>
+      </ul>
+      <form action="/profile/edit/<%= currUser._id %>" method="get">
+        <button type="submit" class="btn btn-danger col-1">Edit</button>
+      </form>
+    </div>
 
-  <div class="dashboard-actions">
-    <% if (currUser.userType === 'supplier') { %>
-      <a href="/supplier/add-product" class="btn col-2 mb-2">Add New Product</a>
-      <a href="/supplier/manage-products/<%= currUser._id %>" class="btn col-2 mb-2">Manage Products</a>
-      <a href="/supplier/orders" class="btn col-2 mb-2">View Requests</a>
-    <% } %>
-
-    <% if (currUser.userType === 'vendor') { %>
-      <a href="/vendor/orders" class="btn col-2 mb-2">Order History</a>
-    <% } %>
-  </div>
+    <div class="dashboard-actions">
+      <% if (currUser.userType === 'supplier') { %>
+        <a href="/supplier/add-product" class="btn col-2 mb-2">Add New Product</a>
+        <a href="/supplier/manage-products/<%= currUser._id %>" class="btn col-2 mb-2">Manage Products</a>
+        <a href="/supplier/orders" class="btn col-2 mb-2">View Requests</a>
+      <% } %>
+      <% if (currUser.userType === 'vendor') { %>
+        <a href="/vendor/orders" class="btn col-2 mb-2">Order History</a>
+      <% } %>
+    </div>
+  <% } else { %>
+    <div class="alert alert-warning mt-4">
+      Please <a href="/login">log in</a> to view your dashboard.
+    </div>
+  <% } %>
 
 </div>
+
+<div id="map" style="width: 100%; height: 400px; border-radius: 10px;"></div>
+
+<% if (currUser && currUser.geometry) { %>
+<script>
+    mapboxgl.accessToken = '<%= process.env.MAP_TOKEN %>';
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [
+            <% if (currUser.geometry && currUser.geometry.coordinates) { %>
+                <%= currUser.geometry.coordinates[0] %>,
+                <%= currUser.geometry.coordinates[1] %>
+            <% } else { %>
+                77.5946, 12.9716  // default to Bangalore coordinates
+            <% } %>
+        ],
+        zoom: 12
+    });
+</script>
+<% } %>
