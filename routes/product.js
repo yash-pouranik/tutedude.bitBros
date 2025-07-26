@@ -198,8 +198,8 @@ router.put('/product/:id', isLoggedIn, isSupplier, isOwner, async (req, res) => 
         price,
         quantity,
         unit,
-        imageUrl,
-        availability
+        imageUrl: imageUrl || null,
+        availability: availability === "on"
       },
       { new: true, runValidators: true }
     );
