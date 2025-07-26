@@ -20,6 +20,7 @@ const upload = multer();
 
 //models
 const User = require("./model/user.js");
+const Product = require("./model/product.js"); 
 
 
 //otp
@@ -92,9 +93,7 @@ app.get("/", (req, res) => {
     res.render("templates/home.ejs");
 });
 
-app.get("/shopping", (req, res)=>{
-    res.render("templates/shopping.ejs");
-});
+
 
 app.get("/dashboard", (req, res)=>{
     res.render("user/dashboard.ejs");
@@ -122,6 +121,31 @@ app.get("/contact", (req, res)=>{
     console.log('Path:', req.path);
     next(new ExpressError(404, "Page Not Found"));
 })
+
+
+app.get('/shopping', async (req, res) => {
+  try {
+    const allProducts = await Product.find({ availability: true });
+
+    // Filtered lists
+    const freshProducts = allProducts.filter(p => p.type === 'fresh');
+    const packedProducts = allProducts.filter(p => p.type === 'packed');
+    const veggies = freshProducts.filter(p => p.freshCategory === 'veggies');
+    const dairy = freshProducts.filter(p => p.freshCategory === 'dairy');
+
+    res.render('product/shopping', {
+      allProducts,
+      freshProducts,
+      packedProducts,
+      veggies,
+      dairy
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
+});
+
 
 //error handle middlewares
 app.use((err, req, res, next) => {

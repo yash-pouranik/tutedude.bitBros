@@ -1,0 +1,27 @@
+<% layout("layouts/boilerplate") -%>
+
+<div class="container my-5">
+  <h2 class="text-center mb-5 display-6 fw-bold text-primary">📦 Manage Products</h2>
+
+  <% if (allProducts.length === 0) { %>
+    <div class="alert alert-warning text-center" role="alert">
+      No products found for this supplier.
+    </div>
+  <% } else { %>
+    <div class="row g-4">
+      <% allProducts.forEach(product => { %>
+        <div class="col-md-4">
+          <div class="card shadow-sm h-100 border-0 rounded-4">
+            <div class="card-body">
+              <h5 class="card-title fw-semibold text-dark"><%= product.name %></h5>
+              <hr>
+              <p class="mb-2"><strong>👤 Supplier:</strong> <%= product.supplierId?.username || "N/A" %></p>
+              <p class="mb-2"><strong>💰 Price:</strong> ₹<%= product.price %></p>
+              <p class="mb-2"><strong>📦 Quantity:</strong> <%= product.quantity %></p>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
