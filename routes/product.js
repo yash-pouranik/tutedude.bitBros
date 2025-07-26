@@ -77,7 +77,7 @@ router.get("/product/:id", async (req, res) => {
 
 router.get('/supplier/manage-products/:id', async (req, res) => {
   try {
-    const allProducts = await Product.find({ supplierId: req.params.id }).populate("ownerId");
+    const allProducts = await Product.find({ supplierId: req.params.id }).populate("supplierId");
 
     res.render('product/manageProducts', {
       allProducts,

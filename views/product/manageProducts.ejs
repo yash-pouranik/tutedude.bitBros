@@ -1,20 +1,23 @@
-<% layout("layout/boilerPlate") -%>
+<% layout("layouts/boilerplate") -%>
 
 <div class="container my-5">
-  <h2 class="text-center mb-4">Manage Products</h2>
+  <h2 class="text-center mb-5 display-6 fw-bold text-primary">📦 Manage Products</h2>
 
   <% if (allProducts.length === 0) { %>
-    <p>No products found for this supplier.</p>
+    <div class="alert alert-warning text-center" role="alert">
+      No products found for this supplier.
+    </div>
   <% } else { %>
-    <div class="row">
+    <div class="row g-4">
       <% allProducts.forEach(product => { %>
-        <div class="col-md-4 mb-4">
-          <div class="card h-100">
+        <div class="col-md-4">
+          <div class="card shadow-sm h-100 border-0 rounded-4">
             <div class="card-body">
-              <h5 class="card-title"><%= product.name %></h5>
-              <p><strong>Owner:</strong> <%= product.ownerId?.name || "N/A" %></p>
-              <p><strong>Price:</strong> ₹<%= product.price %></p>
-              <p><strong>Quantity:</strong> <%= product.quantity %></p>
+              <h5 class="card-title fw-semibold text-dark"><%= product.name %></h5>
+              <hr>
+              <p class="mb-2"><strong>👤 Supplier:</strong> <%= product.supplierId?.username || "N/A" %></p>
+              <p class="mb-2"><strong>💰 Price:</strong> ₹<%= product.price %></p>
+              <p class="mb-2"><strong>📦 Quantity:</strong> <%= product.quantity %></p>
             </div>
           </div>
         </div>

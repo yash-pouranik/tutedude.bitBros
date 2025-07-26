@@ -27,8 +27,8 @@
 
   <div class="dashboard-actions">
     <% if (currUser.userType === 'supplier') { %>
-      <a href="/supplier/add-product/<%= currUser._id %>" class="btn col-2 mb-2">Add New Product</a>
-      <a href="/supplier/manage-products" class="btn col-2 mb-2">Manage Products</a>
+      <a href="/supplier/add-product" class="btn col-2 mb-2">Add New Product</a>
+      <a href="/supplier/manage-products/<%= currUser._id %>" class="btn col-2 mb-2">Manage Products</a>
       <a href="/vendor/requests" class="btn col-2 mb-2">View Requests</a>
     <% } %>
 

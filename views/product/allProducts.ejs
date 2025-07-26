@@ -26,7 +26,8 @@
             <%= product.availability ? "Yes" : "No" %>
           </span>
         </p>
-        <p><strong>Owner:</strong> <%= product.supplierId?.name || "N/A" %></p>
+        <p class="mb-2"><strong>Supplier:</strong> <%= product.supplierId?.username || "N/A" %></p>
+
 
         <p><span class="fw-semibold">Added On:</span> <%= product.createdAt.toDateString() %></p>
       </div>
