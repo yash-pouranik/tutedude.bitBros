@@ -79,8 +79,11 @@
     <div class="text-center mt-5">
       <h4 class="mb-3 fw-semibold">🧾 Total Amount: ₹<%= totalAmount %></h4>
       <form action="/place-order" method="POST">
+        <input type="hidden" name="vendorId" value="<%= currUser._id %>">
+        <input type="hidden" name="orderType" value="online"> <!-- or whatever default -->
         <button type="submit" class="checkout-btn">Proceed to Checkout</button>
-      </form>
+    </form>
+
     </div>
   <% } %>
 </div>

@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const Cart = require("../models/Cart");
-const Order = require("../models/Order");
-const Product = require("../models/Product");
-const User = require("../models/User");
+const Cart = require("../model/cart");
+const Order = require("../model/order");
+const Product = require("../model/product");
+const User = require("../model/user");
 
 // Create Order from Cart
 router.post("/place-order", async (req, res) => {
@@ -12,7 +12,10 @@ router.post("/place-order", async (req, res) => {
     const cart = await Cart.findOne({ userId: vendorId }).populate("items.productId");
 
     if (!cart || cart.items.length === 0) {
-      return res.status(400).json({ error: "Cart is empty" });
+      
+      req.flash("error", "Cart not Found")
+    return res.status(400).redirect("/shopping");
+     
     }
 
     let totalAmount = 0;
@@ -39,7 +42,7 @@ router.post("/place-order", async (req, res) => {
       vendor: vendorId,
       products: orderItems,
       totalAmount,
-      orderType
+      
     });
 
     await newOrder.save();
@@ -47,10 +50,12 @@ router.post("/place-order", async (req, res) => {
     // Clear Cart
     await Cart.deleteOne({ userId: vendorId });
 
-    res.status(201).json({ message: "Order placed successfully", order: newOrder });
+    req.flash("success", "Order placed successfully")
+    res.status(201).redirect("/shopping");
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Server error" });
+    req.flash("error", "Something went wrong")
+    res.status(400).redirect("/shopping");
   }
 });
 

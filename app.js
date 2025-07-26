@@ -87,6 +87,9 @@ app.use(setLocals);
 
 const userRoute = require("./routes/user") 
 const productRoute = require("./routes/product.js")
+const orderRoute = require("./routes/order.js")
+
+app.use("/", orderRoute);
 app.use("/", userRoute);
 app.use("/", productRoute);
 

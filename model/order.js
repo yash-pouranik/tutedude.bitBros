@@ -43,11 +43,7 @@ const orderSchema = new mongoose.Schema({
     enum: ["Pending", "Paid", "Failed"],
     default: "Pending"
   },
-  orderType: {
-    type: String,
-    enum: ["Fresh", "Packed"],
-    required: true
-  },
+
   createdAt: {
     type: Date,
     default: Date.now
