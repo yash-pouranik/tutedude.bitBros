@@ -55,18 +55,18 @@ module.exports.isOwner = async (req, res, next) => {
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     req.flash('error', 'Invalid product ID');
-    return res.redirect('/products/allProducts');
+    return res.redirect('/shopping');
   }
 
   const product = await Product.findById(id);
   if (!product) {
     req.flash('error', 'Product not found');
-    return res.redirect('/products/allProducts');
+    return res.redirect('/shopping');
   }
-  
+
 if (!product.supplierId.equals(req.session.user._id)) {
   req.flash('error', 'You are not the owner of this product');
-  return res.redirect('/products/allProducts');
+  return res.redirect('/shopping');
 }
 
   next();

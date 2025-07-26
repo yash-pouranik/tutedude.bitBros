@@ -152,25 +152,14 @@ router.get('/products/:id/edit', isLoggedIn, isSupplier, isOwner, async (req, re
 
     if (!product) {
       req.flash('error', 'Product not found');
-      return res.redirect('/product/allProducts');
+      return res.redirect('/shopping');
     }
 
     res.render('product/editProductForm', { product });
   } catch (err) {
     console.error('Error fetching product:', err);
     req.flash('error', 'Something went wrong');
-    res.redirect('/product/:id');
-  }
-});
-
-router.get('/products/allProducts', isLoggedIn, isSupplier, async (req, res) => {
-  try {
-    const products = await Product.find({ supplierId: req.session.user._id });
-    res.render('product/allProducts', { products, currUser: req.session.user });
-  } catch (err) {
-    console.error('Error fetching all products:', err);
-    req.flash('error', 'Could not fetch products');
-    res.redirect('/dashboard');
+    res.redirect('/shopping');
   }
 });
 
