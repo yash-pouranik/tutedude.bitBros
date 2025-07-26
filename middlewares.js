@@ -64,10 +64,11 @@ module.exports.isOwner = async (req, res, next) => {
     return res.redirect('/shopping');
   }
 
-if (!product.supplierId.equals(req.session.user._id)) {
-  req.flash('error', 'You are not the owner of this product');
-  return res.redirect('/shopping');
-}
+  if (!product.supplierId.equals(req.session.user._id)) {
+    req.flash('error', 'You are not the owner of this product');
+    return res.redirect('/shopping');
+  }
 
   next();
 };
+

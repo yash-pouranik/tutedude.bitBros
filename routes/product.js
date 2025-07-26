@@ -76,14 +76,11 @@ router.get("/product/:id", async (req, res) => {
   }
 });
 
-
-
-
 router.get('/supplier/manage-products/:id', async (req, res) => {
   try {
     const allProducts = await Product.find({ supplierId: req.params.id }).populate("supplierId");
 
-    res.render("product/allProducts", { product, currUser: req.user });
+    res.render("product/manageProducts", { allProducts, currUser: req.session.user });
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -142,6 +139,28 @@ router.post("/cart/add/:productId", isLoggedIn, async (req, res) => {
     res.status(500).send("Something went wrong while adding to cart.");
   }
 });
+
+router.post("/cart/remove/:productId", isLoggedIn, async (req, res) => {
+  try {
+    const userId = req.session.user._id;
+    const productId = req.params.productId;
+
+    // Find user's cart
+    const cart = await Cart.findOne({ userId });
+
+    if (!cart) return res.redirect("/cart/view");
+
+    // Filter out the product from cart
+    cart.items = cart.items.filter(item => !item.productId.equals(productId));
+
+    await cart.save();
+    res.redirect("/cart/view");
+  } catch (err) {
+    console.error("Error removing item from cart:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 
 // routes/products.js or similar
 

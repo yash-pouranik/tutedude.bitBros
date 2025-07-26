@@ -6,6 +6,7 @@ const Product = require("../model/product");
 const User = require("../model/user");
 const {isLoggedIn}=require("../middlewares");
 
+
 // Create Order from Cart
 router.post("/place-order", async (req, res) => {
   try {
