@@ -54,8 +54,9 @@ async function main() {
 }
 
 main()
-.then((r) => {
+.then(async(r) => {
     console.log("Connecton to DB Done");
+    // in your script or route
 })
 .catch((e) => {
     console.log("Connection to DB Failed");
