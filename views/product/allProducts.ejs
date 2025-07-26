@@ -30,6 +30,12 @@
 
 
         <p><span class="fw-semibold">Added On:</span> <%= product.createdAt.toDateString() %></p>
+      
+      <button class="btn btn-primary mt-2">Add to Cart</button>
+      <% if (currUser && currUser.userType === 'supplier' && isSupplier) { %>
+      <a href="/products/<%= product._id %>/edit" class="btn btn-warning mt-2">Edit Product</a>
+      <% } %>
+      
       </div>
     </div>
   </div>
