@@ -183,7 +183,7 @@ router.get('/products/:id/edit', isLoggedIn, isSupplier, isOwner, async (req, re
 });
 
 
-router.put('/products/:id', isLoggedIn, isSupplier, isOwner, async (req, res) => {
+router.put('/product/:id', isLoggedIn, isSupplier, isOwner, async (req, res) => {
   const { id } = req.params;
   const { name, description, type, freshCategory, price, quantity, unit, imageUrl, availability } = req.body;
 
