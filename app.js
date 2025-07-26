@@ -85,6 +85,11 @@ app.use(flash());
 
 app.use(setLocals);
 
+app.use((req, res, next) => {
+  res.locals.user = req.session.user;  // or however you're attaching user
+  next();
+});
+
 const userRoute = require("./routes/user") 
 const productRoute = require("./routes/product.js")
 const orderRoute = require("./routes/order.js")
