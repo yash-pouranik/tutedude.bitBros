@@ -75,6 +75,47 @@ router.get("/supplier/orders", isLoggedIn, async (req, res) => {
   }
 });
 
+// Show edit form
+router.get("/orders/:id/edit", isLoggedIn, async (req, res) => {
+  const order = await Order.findById(req.params.id)
+    .populate("products.product")
+    .populate("supplier")
+    .populate("vendor");
+
+  if (!order) return res.status(404).send("Order not found");
+
+  // Only supplier can edit
+  if (order.supplier._id.toString() !== req.session.user._id.toString()) {
+    req.flash("error", "Unauthorized");
+    return res.redirect("/dashboard");
+  }
+
+  res.render("order/edit", { order });
+});
+
+
+router.put("/orders/:id", isLoggedIn, async (req, res) => {
+  const { status, paymentStatus } = req.body;
+  const order = await Order.findById(req.params.id);
+
+  if (!order) return res.status(404).send("Order not found");
+
+  // Only supplier can update
+  if (order.supplier.toString() !== req.session.user._id.toString()) {
+    req.flash("error", "Unauthorized");
+    return res.redirect("/dashboard");
+  }
+
+  order.status = status;
+  order.paymentStatus = paymentStatus;
+  await order.save();
+
+  req.flash("success", "Order updated successfully!");
+  res.redirect("/supplier/orders"); // or wherever you're listing orders
+});
+
+
+
 
 
 module.exports = router;
