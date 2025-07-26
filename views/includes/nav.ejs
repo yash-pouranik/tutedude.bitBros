@@ -18,9 +18,13 @@
         <li class="nav-item">
           <a class="nav-link active" href="/">🏠 Home</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/cart/view">🛒 Your-Cart</a>
+
+        <% if (currUser && currUser.userType === 'vendor') { %>
+         <li class="nav-item">
+         <a class="nav-link" href="/cart/view">🛒 Your-Cart</a>
         </li>
+        <% } %>
+
         <li class="nav-item">
           <a class="nav-link" href="/shopping">🥗 Products</a>
         </li>
