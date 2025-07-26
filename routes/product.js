@@ -226,7 +226,22 @@ router.put('/product/:id', isLoggedIn, isSupplier, isOwner, async (req, res) => 
   }
 });
 
-
-
+// DELETE route for deleting a product
+router.post('/products/:id/delete', isLoggedIn, isSupplier, isOwner, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deletedProduct = await Product.findByIdAndDelete(id);
+    if (!deletedProduct) {
+      req.flash('error', 'Product not found');
+      return res.redirect('/shopping');
+    }
+    req.flash('success', 'Product deleted successfully!');
+    res.redirect('/shopping');
+  } catch (err) {
+    console.error('Error deleting product:', err);
+    req.flash('error', 'Something went wrong while deleting the product');
+    res.redirect('/shopping');
+  }
+});
 
 module.exports = router;
