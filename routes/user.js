@@ -117,12 +117,17 @@ router.get('/profile/edit/:id', isLoggedIn, async (req, res) => {
 
 router.post("/profile/:id/edit", async (req, res) => {
   const { id } = req.params;
-  const { phone, address } = req.body;
+  let { phone, address, userType } = req.body;
+
+  if (Array.isArray(phone)) {
+    phone = phone[0];
+  }
 
   try {
     await User.findByIdAndUpdate(id, {
       phone,
-      address
+      address,
+      userType
     });
 
     res.redirect("/dashboard"); // or wherever you want
