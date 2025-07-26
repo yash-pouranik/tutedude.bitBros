@@ -4,6 +4,7 @@ const Cart = require("../model/cart");
 const Order = require("../model/order");
 const Product = require("../model/product");
 const User = require("../model/user");
+const {isLoggedIn}=require("../middlewares");
 
 // Create Order from Cart
 router.post("/place-order", async (req, res) => {
@@ -58,5 +59,23 @@ router.post("/place-order", async (req, res) => {
     res.status(400).redirect("/shopping");
   }
 });
+
+router.get("/supplier/orders", isLoggedIn, async (req, res) => {
+  try {
+    const supplierId = req.session.user._id;
+
+    const orders = await Order.find({ supplier: supplierId })
+      .populate("vendor")
+      .populate("products.product", "name price")
+      .sort({ createdAt: -1 });
+
+    res.render("order/supplier-orders", { orders, user: req.session.user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error loading supplier orders");
+  }
+});
+
+
 
 module.exports = router;
