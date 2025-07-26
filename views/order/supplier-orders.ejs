@@ -1,0 +1,107 @@
+<% layout("layouts/boilerplate") -%>
+
+<style>
+  .order-card {
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+
+  .order-header {
+    background-color: #f1f3f5;
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #333;
+  }
+
+  .order-badge {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    font-weight: 500;
+    margin-left: 0.5rem;
+  }
+
+  .badge-status {
+    background-color: #d0ebff;
+    color: #1c7ed6;
+  }
+
+  .badge-paid {
+    background-color: #d3f9d8;
+    color: #2b8a3e;
+  }
+
+  .badge-pending {
+    background-color: #bffff8;
+    color: #d9480f;
+  }
+
+  .product-list-item {
+    background-color: rgba(209, 255, 45, 0.57) !important;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+    font-size: 0.95rem;
+  }
+
+  .product-list-item:last-child {
+    border-bottom: none;
+  }
+
+  .product-label {
+    font-weight: 500;
+    color: #495057;
+  }
+
+  .order-empty {
+    font-size: 1.2rem;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  }
+</style>
+
+<div class="container my-5">
+  <h2 class="text-center text-primary mb-5 display-6">📦 Supplier Dashboard — Orders Received</h2>
+
+  <% if (orders.length === 0) { %>
+    <div class="order-empty">
+      <p class="mb-0">You have not received any orders yet.</p>
+    </div>
+  <% } else { %>
+    <% orders.forEach(order => { %>
+      <div class="order-card">
+        <div class="order-header">
+          <div>
+            <span class="me-2"><i class="bi bi-person-fill"></i> Vendor: <%= order.vendor.username %></span>
+            <span class="me-2"><i class="bi bi-currency-rupee"></i> ₹<%= order.totalAmount %></span>
+          </div>
+          <div>
+            <span class="order-badge badge-status"><%= order.status %></span>
+            <span class="order-badge <%= order.paymentStatus === 'Paid' ? 'badge-paid' : 'badge-pending' %>">
+              <%= order.paymentStatus %>
+            </span>
+            <span class="text-muted ms-3"><%= new Date(order.createdAt).toLocaleString() %></span>
+          </div>
+        </div>
+
+        <% order.products.forEach(p => { %>
+          <div class="product-list-item">
+            <span class="product-label">🛒 <%= p.product.name %></span><br>
+            Qty: <%= p.quantity %> &nbsp; | &nbsp;
+            Price/unit: ₹<%= p.product.price %>
+          </div>
+        <% }) %>
+      </div>
+    <% }) %>
+  <% } %>
+</div>

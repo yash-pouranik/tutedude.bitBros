@@ -29,7 +29,7 @@
     <% if (currUser.userType === 'supplier') { %>
       <a href="/supplier/add-product" class="btn col-2 mb-2">Add New Product</a>
       <a href="/supplier/manage-products/<%= currUser._id %>" class="btn col-2 mb-2">Manage Products</a>
-      <a href="/vendor/requests" class="btn col-2 mb-2">View Requests</a>
+      <a href="/supplier/orders" class="btn col-2 mb-2">View Requests</a>
     <% } %>
 
     <% if (currUser.userType === 'vendor') { %>
