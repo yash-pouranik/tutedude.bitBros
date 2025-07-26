@@ -1,0 +1,242 @@
+<% layout('layouts/boilerplate') %>
+
+<section class="shopping-page">
+  <div class="container">
+
+    <!-- 🧭 Filter Nav -->
+    <nav class="top-filter-nav mt-3">
+      <ul class="filter-nav-list">
+        <li><a href="#" class="filter-link active" onclick="showSection('all')">🥕 All</a></li>
+        <li><a href="#" class="filter-link" onclick="showSection('fresh')">🌱 Fresh</a></li>
+        <li><a href="#" class="filter-link" onclick="showSection('packed')">📦 Packed</a></li>
+      </ul>
+    </nav>
+
+    <!-- 📦 All Products -->
+    <div id="all-section" class="item-section">
+      <h2>All Products</h2>
+      <% if (allProducts.length === 0) { %>
+        <p class="placeholder">No products to show yet.</p>
+      <% } else { %>
+        <div class="product-grid">
+          <% allProducts.forEach(p => { %>
+            <a href="/product/<%= p._id %>" class="product-card-link">
+              <div class="product-card">
+                <div class="product-img">
+                  <img src="<%= p.imageUrl %>" alt="<%= p.name %>">
+                </div>
+                <div class="product-details">
+                  <h3><%= p.name %></h3>
+                  <p class="price">₹<%= p.price %> per <%= p.unit %></p>
+                  <p class="desc"><%= p.description %></p>
+                </div>
+              </div>
+            </a>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- 🥬 Fresh Section -->
+    <div id="fresh-section" class="item-section hidden">
+      <h2>Fresh Products</h2>
+      <div class="fresh-filter-buttons">
+        <button onclick="filterFresh('all')" class="fresh-btn active">All</button>
+        <button onclick="filterFresh('veggies')" class="fresh-btn">Veggies</button>
+        <button onclick="filterFresh('dairy')" class="fresh-btn">Dairy</button>
+      </div>
+      <div class="product-grid">
+        <% freshProducts.forEach(p => { %>
+          <a href="/product/<%= p._id %>" class="product-card-link fresh-item <%= p.freshCategory %>">
+            <div class="product-card">
+              <div class="product-img">
+                <img src="<%= p.imageUrl %>" alt="<%= p.name %>">
+              </div>
+              <div class="product-details">
+                <h3><%= p.name %></h3>
+                <p class="price">₹<%= p.price %> per <%= p.unit %></p>
+                <p class="desc"><%= p.description %></p>
+              </div>
+            </div>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- 📦 Packed Section -->
+    <div id="packed-section" class="item-section hidden">
+      <h2>Packed Products</h2>
+      <% if (packedProducts.length === 0) { %>
+        <p class="placeholder">No packed products available yet.</p>
+      <% } else { %>
+        <div class="product-grid">
+          <% packedProducts.forEach(p => { %>
+            <a href="/product/<%= p._id %>" class="product-card-link">
+              <div class="product-card">
+                <div class="product-img">
+                  <img src="<%= p.imageUrl %>" alt="<%= p.name %>">
+                </div>
+                <div class="product-details">
+                  <h3><%= p.name %></h3>
+                  <p class="price">₹<%= p.price %> per <%= p.unit %></p>
+                  <p class="desc"><%= p.description %></p>
+                </div>
+              </div>
+            </a>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+
+  </div>
+</section>
+
+<!-- JavaScript -->
+<script>
+  function showSection(type) {
+    const sections = {
+      all: document.getElementById('all-section'),
+      fresh: document.getElementById('fresh-section'),
+      packed: document.getElementById('packed-section'),
+    };
+
+    Object.values(sections).forEach(section => section.classList.add('hidden'));
+    sections[type].classList.remove('hidden');
+
+    document.querySelectorAll('.filter-link').forEach(link => link.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  function filterFresh(type) {
+    const items = document.querySelectorAll(".fresh-item");
+    const buttons = document.querySelectorAll(".fresh-btn");
+
+    buttons.forEach(btn => btn.classList.remove("active"));
+    event.target.classList.add("active");
+
+    items.forEach(item => {
+      if (type === "all") {
+        item.style.display = "block";
+      } else {
+        item.style.display = item.classList.contains(type) ? "block" : "none";
+      }
+    });
+  }
+</script>
+
+<!-- CSS -->
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f9f9f9;
+  }
+
+  .product-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .product-card-link {
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s;
+  }
+
+  .product-card {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    width: 240px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .product-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  .product-img img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .product-card:hover .product-img img {
+    transform: scale(1.05);
+  }
+
+  .product-details {
+    padding: 16px;
+  }
+
+  .product-details h3 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: #333;
+  }
+
+  .product-details .price {
+    color: #2a9d8f;
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+
+  .product-details .desc {
+    font-size: 0.95rem;
+    color: #666;
+  }
+
+  .filter-link.active {
+    font-weight: bold;
+    color: green;
+  }
+
+  .filter-nav-list {
+    display: flex;
+    gap: 10px;
+    list-style: none;
+    padding: 0;
+  }
+
+  .filter-link {
+    text-decoration: none;
+    padding: 8px 14px;
+    background: #eee;
+    border-radius: 5px;
+  }
+
+  .placeholder {
+    color: #888;
+    font-style: italic;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .fresh-filter-buttons {
+    margin: 15px 0;
+  }
+
+  .fresh-btn {
+    padding: 8px 16px;
+    background-color: #7DC97D;
+    color: white;
+    border: none;
+    margin-right: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  .fresh-btn.active {
+    background-color: #4CAF50;
+  }
+</style>
