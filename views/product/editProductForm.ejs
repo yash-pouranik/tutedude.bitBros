@@ -42,6 +42,20 @@
           ><%= product.description %></textarea>
         </div>
 
+       <div class="mb-4">
+       <label for="availability" class="form-label fw-semibold">Available</label>
+       <!-- Hidden input to ensure a value is always sent -->
+       <input type="hidden" name="product[availability]" value="false" />
+       <input
+        type="checkbox"
+        id="availability"
+        name="product[availability]"
+        value="true"
+        <%= product.availability ? 'checked' : '' %>
+       />
+       <label for="availability">In Stock</label>
+       </div>
+
         <div class="mb-3">
           <label for="category" class="form-label">Category</label>
           <select id="category" name="product[category]" class="form-select" required>

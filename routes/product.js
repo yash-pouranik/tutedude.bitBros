@@ -185,7 +185,14 @@ router.get('/products/:id/edit', isLoggedIn, isSupplier, isOwner, async (req, re
 
 router.put('/product/:id', isLoggedIn, isSupplier, isOwner, async (req, res) => {
   const { id } = req.params;
-  const { name, description, type, freshCategory, price, quantity, unit, imageUrl, availability } = req.body.product;
+  let { name, description, type, freshCategory, price, quantity, unit, imageUrl, availability, category } = req.body.product;
+
+  // Handle checkbox value for availability
+  if (Array.isArray(availability)) {
+    availability = availability.includes('true');
+  } else {
+    availability = availability === 'true';
+  }
 
   try {
     const updatedProduct = await Product.findByIdAndUpdate(
@@ -199,7 +206,8 @@ router.put('/product/:id', isLoggedIn, isSupplier, isOwner, async (req, res) => 
         quantity,
         unit,
         imageUrl: imageUrl || null,
-        availability: availability === "on"
+        availability,
+        category
       },
       { new: true, runValidators: true }
     );
