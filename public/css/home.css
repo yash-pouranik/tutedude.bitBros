@@ -1,9 +1,16 @@
 /* home */
+.heading{
+  font-size: 2rem;
+  font-family: "Intel-One", sans-serif;
+  font-weight: 400;
+}
+
 .hero {
   background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('/images/market.jpg') no-repeat center center/cover;
   color: white;
   padding: 6rem 2rem;
   text-align: center;
+  font-weight: 400;
 }
 
 .hero-content h1 {
@@ -60,4 +67,9 @@
   border-radius: 6px;
   text-decoration: none;
   font-weight: bold;
+}
+
+.btn-secondary:hover {
+  background-color: #00ff62;
+  color: rgb(29, 167, 45);
 }

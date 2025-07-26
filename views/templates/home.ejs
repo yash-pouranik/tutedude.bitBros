@@ -1,33 +1,122 @@
 <% layout("layouts/boilerplate") %>
 
-<section class="hero">
-  <div class="hero-content">
-    <h1>Welcome to Apna Bazaar</h1>
-    <p>Your trusted digital marketplace for everything local.</p>
-    <a href="/shopping" class="btn-primary">Start Shopping</a>
+<style>
+  .spin-container {
+    height: 5rem;
+    overflow: hidden;
+    position: relative;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .spin-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-size: 3rem;
+    line-height: 1.2;
+    opacity: 0;
+    font-weight: 900;
+    transform: translateY(100%);
+    transition: transform 0.8s ease, opacity 0.8s ease;
+  }
+
+  .spin-text.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .spin-text.hide {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+
+  @media (max-width: 640px) {
+    .spin-text {
+      font-size: 2rem;
+    }
+
+    .spin-container {
+      height: 5rem;
+    }
+  }
+</style>
+
+<section class="hero py-20 bg-gradient-to-r from-yellow-100 to-orange-200 text-center">
+  <div class="hero-content max-w-4xl mx-auto px-6">
+    <h1 class="heading mb-4">Apna Bazaar</h1>
+
+    <!-- Smooth Scrolling Text -->
+    <div class="text-xl font-semibold text-orange-600 spin-container">
+      <div id="spin-text-a" class="spin-text show">Vendors se Suppliers tak</div>
+      <div id="spin-text-b" class="spin-text"></div>
+    </div>
+
+    <a href="/shopping" class="btn btn-primary text-white bg-orange-500 hover:bg-orange-600 px-6 py-2 rounded-full shadow-md">Start Shopping</a>
   </div>
 </section>
 
-<section class="features">
-  <div class="feature">
-    <i class="fas fa-truck"></i>
-    <h3>Fast Delivery</h3>
-    <p>We ensure same-day or next-day delivery for all local orders.</p>
+<section class="features grid grid-cols-1 md:grid-cols-3 gap-6 py-16 px-8 text-center bg-white">
+  <div class="feature p-6 shadow rounded-xl">
+    <i class="fas fa-truck text-4xl text-orange-500 mb-4"></i>
+    <h3 class="text-xl font-semibold mb-2">Fast Delivery</h3>
+    <p>Same-day or next-day delivery for all local orders.</p>
   </div>
-  <div class="feature">
-    <i class="fas fa-tags"></i>
-    <h3>Best Prices</h3>
+  <div class="feature p-6 shadow rounded-xl">
+    <i class="fas fa-tags text-4xl text-orange-500 mb-4"></i>
+    <h3 class="text-xl font-semibold mb-2">Best Prices</h3>
     <p>Affordable rates from trusted neighborhood vendors.</p>
   </div>
-  <div class="feature">
-    <i class="fas fa-headset"></i>
-    <h3>24/7 Support</h3>
-    <p>We're always here to help with your orders and queries.</p>
+  <div class="feature p-6 shadow rounded-xl">
+    <i class="fas fa-headset text-4xl text-orange-500 mb-4"></i>
+    <h3 class="text-xl font-semibold mb-2">24/7 Support</h3>
+    <p>We’re always here to help with your orders and queries.</p>
   </div>
 </section>
 
-<section class="cta-section">
-  <h2>Shop from home, support local</h2>
-  <p>Join thousands of users who trust Apna Bazaar for their daily needs.</p>
-  <a href="/signup" class="btn-secondary">Join Now</a>
+<section class="cta-section bg-orange-100 py-20 text-center">
+  <h2 class="text-3xl font-bold mb-4">Shop from home, support local</h2>
+  <p class="mb-6 text-lg">Join thousands of users who trust Apna Bazaar for their daily needs.</p>
+  <a href="/signup" class="btn btn-secondary bg-white border border-orange-500 text-orange-500 hover:bg-orange-50 px-6 py-2 rounded-full">Join Now</a>
 </section>
+
+<script>
+  const texts = [
+    "Vendors se Suppliers tak",
+    "विक्रेताओं से आप तक",
+    "स्थानीय व्यापारियों का बाज़ार",
+    "From Vendors to Suppliers",
+    "ব্যবসায়ীদের থেকে আপনার কাছে",
+    "விற்பனையாளர்கள் முதல் உங்களுக்கு",
+    "ਵਿਕਰੇਤਿਆਂ ਤੋਂ ਤੁਹਾਡੇ ਤੱਕ",
+  ];
+
+  let current = 0;
+  let showingA = true;
+
+  const elA = document.getElementById("spin-text-a");
+  const elB = document.getElementById("spin-text-b");
+
+  function animateSpinText() {
+    const next = (current + 1) % texts.length;
+
+    const outEl = showingA ? elA : elB;
+    const inEl = showingA ? elB : elA;
+
+    inEl.innerText = texts[next];
+
+    // Start animation
+    outEl.classList.remove("show");
+    outEl.classList.add("hide");
+
+    inEl.classList.remove("hide");
+    inEl.classList.add("show");
+
+    // Swap tracking
+    showingA = !showingA;
+    current = next;
+  }
+
+  setInterval(animateSpinText, 3000); // Change every 3 seconds
+</script>
+
