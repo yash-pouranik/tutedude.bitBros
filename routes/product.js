@@ -50,7 +50,7 @@ router.post("/supplier/:supplierId/add-product", upload.none(), async (req, res)
 
     await newProduct.save();
 
-    res.redirect(`/supplier/${supplierId}/dashboard`); // Or wherever you want
+    res.redirect(`/dashboard`); // Or wherever you want
   } catch (err) {
     console.error("Error adding product:", err);
     res.status(500).send("Internal Server Error");
