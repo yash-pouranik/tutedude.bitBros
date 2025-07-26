@@ -66,10 +66,7 @@ router.get("/product/:id", async (req, res) => {
       return res.status(404).send("Product not found");
     }
 
-    console.log("currUser._id:", req.user._id);
-    console.log("product.supplierId:", product.supplierId);
-
-    res.render("product/allProducts", { product });
+    res.render("product/allProducts", { product, currUser: req.user || null  });
   } catch (err) {
     console.error(err);
     res.status(500).send("Something went wrong");
