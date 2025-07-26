@@ -1,5 +1,35 @@
 <% layout("layouts/boilerplate") -%>
 
+<style>
+  .product-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    border-radius: 1rem;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  }
+
+  .product-card .card-body {
+    background: linear-gradient(135deg, #fdfbfb, #ebedee);
+    border-radius: 1rem;
+    padding: 1.5rem;
+  }
+
+  .product-card .card-title {
+    font-size: 1.3rem;
+    color: #2c3e50;
+  }
+
+  .product-card:hover .card-title {
+    text-decoration: underline;
+  }
+</style>
+
 <div class="container my-5">
   <h2 class="text-center mb-5 display-6 fw-bold text-primary">📦 Manage Products</h2>
 
@@ -11,15 +41,17 @@
     <div class="row g-4">
       <% allProducts.forEach(product => { %>
         <div class="col-md-4">
-          <div class="card shadow-sm h-100 border-0 rounded-4">
-            <div class="card-body">
-              <h5 class="card-title fw-semibold text-dark"><%= product.name %></h5>
-              <hr>
-              <p class="mb-2"><strong>👤 Supplier:</strong> <%= product.supplierId?.username || "N/A" %></p>
-              <p class="mb-2"><strong>💰 Price:</strong> ₹<%= product.price %></p>
-              <p class="mb-2"><strong>📦 Quantity:</strong> <%= product.quantity %></p>
+          <a href="/product/<%= product._id %>" class="product-card">
+            <div class="card h-100 border-0 shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title"><%= product.name %></h5>
+                <hr>
+                <p class="mb-2"><strong>👤 Supplier:</strong> <%= product.supplierId?.username || "N/A" %></p>
+                <p class="mb-2"><strong>💰 Price:</strong> ₹<%= product.price %></p>
+                <p class="mb-2"><strong>📦 Quantity:</strong> <%= product.quantity %></p>
+              </div>
             </div>
-          </div>
+          </a>
         </div>
       <% }) %>
     </div>
