@@ -72,6 +72,60 @@ router.post("/place-order", isLoggedIn, async (req, res) => {
 
 const crypto = require("crypto");
 
+
+
+//for existing order
+// GET: Retry payment for existing pending order
+router.get("/vendor/order/:orderId/pay", isLoggedIn, async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
+    const order = await Order.findById(orderId)
+      .populate("vendor")
+      .populate("products.product");
+
+    if (!order) {
+      req.flash("error", "Order not found");
+      return res.redirect("/vendor/orders");
+    }
+
+    if (order.vendor._id.toString() !== req.session.user._id.toString()) {
+      req.flash("error", "Unauthorized");
+      return res.redirect("/vendor/orders");
+    }
+
+    if (order.paymentStatus === "Paid") {
+      req.flash("info", "Payment already completed");
+      return res.redirect("/vendor/orders");
+    }
+
+    // Create new Razorpay order
+    const razorpayOrder = await razorpayInstance.orders.create({
+      amount: order.totalAmount * 100,
+      currency: "INR",
+      receipt: `retry_rcpt_${Date.now()}`
+    });
+
+    // Store Razorpay order ID for verification later
+    req.session.retryPayment = {
+      orderId: order._id,
+      razorpayOrderId: razorpayOrder.id
+    };
+
+    res.render("payment/checkout", {
+      order: razorpayOrder,
+      user: req.session.user,
+      key_id: process.env.RAZORPAY_KEY_ID,
+      amount: order.totalAmount,
+    });
+  } catch (err) {
+    console.error(err);
+    req.flash("error", "Unable to process retry payment");
+    res.redirect("/vendor/orders");
+  }
+});
+
+
+//
 router.post("/verify-payment", async (req, res) => {
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
@@ -83,20 +137,40 @@ router.post("/verify-payment", async (req, res) => {
     .digest("hex");
 
   if (expectedSignature === razorpay_signature) {
-    // Create order in DB
+    // 🔁 Retry payment case
+    if (req.session.retryPayment) {
+      const { orderId } = req.session.retryPayment;
+
+      const existingOrder = await Order.findById(orderId);
+      if (existingOrder) {
+        existingOrder.paymentStatus = "Paid";
+        existingOrder.paymentId = razorpay_payment_id;
+        await existingOrder.save();
+        req.session.retryPayment = null;
+        req.flash("success", "Payment successful!");
+        return res.redirect("/vendor/orders");
+      }
+    }
+
+    // 🆕 New order from cart case
     const sessionOrder = req.session.tempOrder;
+    if (sessionOrder) {
+      const newOrder = new Order({
+        ...sessionOrder,
+        paymentId: razorpay_payment_id,
+        paymentStatus: "Paid",
+      });
 
-    const newOrder = new Order({
-      ...sessionOrder,
-      paymentId: razorpay_payment_id,
-      paymentStatus: "Paid",
-    });
+      await newOrder.save();
+      await Cart.deleteOne({ userId: sessionOrder.vendor });
+      req.session.tempOrder = null;
 
-    await newOrder.save();
-    await Cart.deleteOne({ userId: sessionOrder.vendor });
-    req.session.tempOrder = null;
+      req.flash("success", "Payment successful and order placed!");
+      return res.redirect("/shopping");
+    }
 
-    req.flash("success", "Payment successful and order placed!");
+    // Fallback
+    req.flash("error", "No order context found");
     return res.redirect("/shopping");
   } else {
     req.flash("error", "Payment verification failed");
@@ -169,6 +243,31 @@ router.put("/orders/:id", isLoggedIn, async (req, res) => {
   res.redirect("/supplier/orders"); // or wherever you're listing orders
 });
 
+
+
+router.get("/vendor/orders", isLoggedIn, async (req, res) => {
+  try {
+    const vendorId = req.session.user._id;
+
+    const orders = await Order.find({ vendor: vendorId })
+      .populate("supplier")
+      .populate("vendor")
+      .populate("products.product", "name price")
+      .sort({ createdAt: -1 });
+
+      console.log(orders)
+
+    // Filter out null products if deleted
+    orders.forEach(order => {
+      order.products = order.products.filter(p => p.product);
+    });
+
+    res.render("order/vendor-orders", { orders, user: req.session.user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error loading vendor orders");
+  }
+});
 
 
 
