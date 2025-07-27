@@ -22,6 +22,11 @@ async function getDistanceFromMapbox(start, end) {
     return null; // Coordinates missing
   }
 
+    if (start.latitude === end.latitude && start.longitude === end.longitude) {
+    return "0.00"; // km
+  }
+
+
   const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${start.longitude},${start.latitude};${end.longitude},${end.latitude}?access_token=${MAPBOX_TOKEN}&geometries=geojson`;
 
   try {
@@ -41,6 +46,7 @@ async function getDistanceFromMapbox(start, end) {
 
 
 router.get('/shopping', isLoggedIn, async (req, res) => {
+  console.log("==== /shopping route HIT ====");
   try {
     const allProducts = await Product.find({ availability: true });
 
@@ -50,16 +56,28 @@ router.get('/shopping', isLoggedIn, async (req, res) => {
     const veggies = freshProducts.filter(p => p.freshCategory === 'veggies');
     const dairy = freshProducts.filter(p => p.freshCategory === 'dairy');
 
-    const loggedInUser = req.session.user;
+    const loggedInUser = await User.findById(req.session.user?._id);
+
+
+
 
 
     for (const product of allProducts) {
-      const productOwner = await User.findById(product.supplierId); // changed from ownerId to supplierId if you're using that
+      console.log("Logged in user:", loggedInUser?.username);
+console.log("User address:", loggedInUser?.address);
+console.log("Product:", product.name);
+console.log("Looking for supplier:", product.supplierId);
+
+const productOwner = await User.findById(product.supplierId);
+console.log("Supplier:", productOwner?.username);
+console.log("Supplier address:", productOwner?.address);
+ // changed from ownerId to supplierId if you're using that
 
       if (loggedInUser?.address && productOwner?.address) {
         product.distance = await getDistanceFromMapbox(
           loggedInUser.address,
           productOwner.address
+          
         );
         console.log({
   product: product.name,

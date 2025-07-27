@@ -73,6 +73,9 @@ router.post("/login", wrapAsync(async (req, res) => {
     };
     await user.save();
 
+    req.session.user = { _id: user._id }; // lighter, cleaner
+
+
     console.log(`OTP for ${phone}: ${otpCode}`); // replace with SMS API in prod
 
     req.session.phone = phone; // store temporarily
