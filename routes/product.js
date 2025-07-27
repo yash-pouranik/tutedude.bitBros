@@ -45,7 +45,7 @@ async function getDistanceFromMapbox(start, end) {
 
 
 
-router.get('/shopping', isLoggedIn, async (req, res) => {
+router.get('/shopping', async (req, res) => {
   console.log("==== /shopping route HIT ====");
   try {
     const allProducts = await Product.find({ availability: true });
