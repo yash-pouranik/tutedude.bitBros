@@ -276,7 +276,7 @@ module.exports = function(io) {
     receiver: order.vendor,
     type: "delivered",
     message: `Your order #${order._id} has been marked as Delivered. Please leave a review.`,
-    link: `/vendor/orders/${order._id}/review`, // 🔗 review link
+    link: `/orders/${order._id}/review`, // 🔗 review link
   });
 
   await notification.save();
