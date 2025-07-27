@@ -4,13 +4,18 @@
   <div class="container">
 
     <!-- 🔍 Search Bar -->
-    <div class="search-bar-wrapper">
-      <input
-        type="text"
-        id="product-search"
-        placeholder="🔍 Search for products..."
-        onkeyup="filterProducts()"
-      />
+    <div class="search-bar-container mb-4">
+      <form  class="search-form">
+        <input
+          type="text"
+          name="q"
+          id="searchInput"
+          placeholder="🔍 Search products..."
+          class="search-input"
+          required
+        />
+        <button type="submit" class="search-button">Search</button>
+      </form>
     </div>
 
     <!-- 🧭 Filter Nav -->
@@ -28,9 +33,9 @@
       <% if (allProducts.length === 0) { %>
         <p class="placeholder">No products to show yet.</p>
       <% } else { %>
-        <div class="product-grid" id="all-products-list">
+        <div class="product-grid" id="all-products-grid">
           <% allProducts.forEach(p => { %>
-            <a href="/product/<%= p._id %>" class="product-card-link product-item" data-name="<%= p.name.toLowerCase() %>">
+            <a href="/product/<%= p._id %>" class="product-card-link" data-name="<%= p.name.toLowerCase() %>">
               <div class="product-card">
                 <div class="product-img">
                   <img src="<%= p.imageUrl %>" alt="<%= p.name %>">
@@ -38,16 +43,12 @@
                 <div class="product-details">
                   <h3><%= p.name %></h3>
                   <p class="price">₹<%= p.price %> per <%= p.unit %></p>
-                  <% if (p.distance) { %>
-                    <p>Distance: <%= p.distance %> km</p>
-                  <% } else { %>
-                    <p>Distance: N/A</p>
-                  <% } %>
                 </div>
               </div>
             </a>
           <% }) %>
         </div>
+        <p id="noResults" class="placeholder hidden">No matching products found.</p>
       <% } %>
     </div>
 
@@ -91,9 +92,7 @@
                 </div>
                 <div class="product-details">
                   <h3><%= p.name %></h3>
-                  
                   <p class="price">₹<%= p.price %> per <%= p.unit %></p>
-                  <p>Distance: <%= p.distance ? p.distance + " km" : "N/A" %>yash</p>
                 </div>
               </div>
             </a>
@@ -105,7 +104,7 @@
   </div>
 </section>
 
-<!-- Scripts -->
+<!-- ✅ LIVE SEARCH SCRIPT -->
 <script>
   function showSection(type) {
     const sections = {
@@ -133,31 +132,27 @@
     });
   }
 
-  function filterProducts() {
-    const input = document.getElementById("product-search").value.toLowerCase();
+  // ✅ Live frontend search (All Products)
+  const searchInput = document.getElementById("searchInput");
+  const productCards = document.querySelectorAll("#all-products-grid .product-card-link");
+  const noResults = document.getElementById("noResults");
 
-    // All Products
-    document.querySelectorAll("#all-products-list .product-item").forEach(item => {
-      const name = item.dataset.name;
-      item.style.display = name.includes(input) ? "block" : "none";
+  searchInput.addEventListener("input", function () {
+    const query = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    productCards.forEach(card => {
+      const name = card.getAttribute("data-name");
+      const match = name.includes(query);
+      card.style.display = match ? "block" : "none";
+      if (match) visibleCount++;
     });
 
-    // Fresh Products
-    document.querySelectorAll("#fresh-section .fresh-item").forEach(item => {
-      const name = item.querySelector("h3").innerText.toLowerCase();
-      item.style.display = name.includes(input) ? "block" : "none";
-    });
-
-    // Packed Products
-    document.querySelectorAll("#packed-section .product-card-link").forEach(item => {
-      const name = item.querySelector("h3").innerText.toLowerCase();
-      item.style.display = name.includes(input) ? "block" : "none";
-    });
-  }
+    noResults.classList.toggle("hidden", visibleCount !== 0);
+  });
 </script>
 
 
-<!-- Styles -->
 <style>
   body {
     font-family: 'Segoe UI', sans-serif;
@@ -188,11 +183,7 @@
     text-align: center;
   }
 
-  #product-search:focus {
-    border-color: #ff922b;
-    box-shadow: 0 5px 14px rgba(255, 146, 43, 0.3);
-  }
-
+  /* Filter Navigation */
   .top-filter-nav {
     display: flex;
     justify-content: center;
@@ -229,7 +220,7 @@
     color: white;
     box-shadow: 0 6px 12px rgba(255, 153, 0, 0.3);
   }
-
+  
   .product-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr); /* 4 columns on large screens */
@@ -262,6 +253,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8) !important;
   }
 
   .product-card:hover {
@@ -308,6 +300,7 @@
     display: none;
   }
 
+  /* Fresh Subfilters */
   .fresh-filter-buttons {
     margin: 20px 0;
     text-align: center;
@@ -332,19 +325,63 @@
     background-color: #2a9d8f;
   }
 
-  @media (max-width: 768px) {
-    .product-grid {
-      grid-template-columns: repeat(2, 1fr);
+  @media (max-width: 576px) {
+    .filter-nav-list {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .product-img img {
+      height: 160px;
     }
   }
 
-  @media (max-width: 480px) {
-    .product-grid {
-      grid-template-columns: 1fr;
-    }
+  /* Search Bar */
+.search-bar-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+}
 
-    #product-search {
-      width: 95%;
-    }
-  }
+.search-form {
+  display: flex;
+  width: 100%;
+  max-width: 500px;
+  background: #ffffff;
+  border-radius: 50px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.search-input {
+  flex-grow: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 50px 0 0 50px;
+  font-size: 1rem;
+  outline: none;
+  background: #fff;
+}
+
+.search-button {
+  padding: 12px 22px;
+  background-color: #ffa94d;
+  color: white;
+  border: none;
+  border-radius: 0 50px 50px 0;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.search-button:hover {
+  background-color: #ff922b;
+}
+
+.search-input::placeholder {
+  color: #aaa;
+}
+
 </style>
+
