@@ -21,7 +21,7 @@ const Product = require("../model/product");
 const Cart = require("../model/cart");
 
 // POST: Add a new product for a supplier
-router.post("/supplier/:supplierId/add-product", upload.single("image"), async (req, res) => {
+router.post("/supplier/:supplierId/add-product", isLoggedIn, upload.single("image"), async (req, res) => {
   try {
     const {
       name, description, type, freshCategory,
