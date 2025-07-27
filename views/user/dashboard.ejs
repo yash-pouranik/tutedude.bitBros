@@ -22,10 +22,14 @@
           </div>
           <div class="col-md-6">
             <p><strong>📍 Address:</strong><br>
-              <%= currUser.address?.street || "" %>,
-              <%= currUser.address?.city || "" %>,
-              <%= currUser.address?.state || "" %>,
+              <%= currUser.address?.street || "" %>
+              <%= currUser.address?.city || "" %>
+              <%= currUser.address?.state || "" %>
               <%= currUser.address?.pincode || "" %>
+              <% if (currUser.userType === "supplier") { %>
+                <p><strong>💰 Total Earnings:</strong> ₹<%= currUser.totalEarnings || 0 %></p>
+              <% } %>
+
             </p>
             <p><strong>🗓️ Registered:</strong> <%= currUser.createdAt ? currUser.createdAt.toDateString() : "N/A" %></p>
           </div>

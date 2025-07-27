@@ -81,6 +81,7 @@ router.get("/vendor/order/:orderId/pay", isLoggedIn, async (req, res) => {
     const orderId = req.params.orderId;
     const order = await Order.findById(orderId)
       .populate("vendor")
+      .populate("supplier")
       .populate("products.product");
 
     if (!order) {
@@ -110,6 +111,22 @@ router.get("/vendor/order/:orderId/pay", isLoggedIn, async (req, res) => {
       orderId: order._id,
       razorpayOrderId: razorpayOrder.id
     };
+
+    const supplier = await User.findById(order.supplier._id);
+    
+
+    console.log("___________________________")
+    console.log(supplier)
+    if(supplier) {
+      supplier.totalEarnings += order.totalAmount;
+      supplier.save();
+      console.log(supplier)
+
+
+
+    }
+
+
 
     res.render("payment/checkout", {
       order: razorpayOrder,
@@ -141,7 +158,8 @@ router.post("/verify-payment", async (req, res) => {
     if (req.session.retryPayment) {
       const { orderId } = req.session.retryPayment;
 
-      const existingOrder = await Order.findById(orderId);
+      const existingOrder = await Order.findById(orderId)
+      .populate("supplier");
       if (existingOrder) {
         existingOrder.paymentStatus = "Paid";
         existingOrder.paymentId = razorpay_payment_id;
@@ -161,10 +179,23 @@ router.post("/verify-payment", async (req, res) => {
         paymentStatus: "Paid",
       });
 
+    const supplier = await User.findById(newOrder.supplier._id);
+    
+
+    console.log("___________________________")
+    console.log(supplier)
+    if(supplier) {
+      supplier.totalEarnings += newOrder.totalAmount;
+      supplier.save();
+      console.log(supplier)
+    }
+
+
       await newOrder.save();
       await Cart.deleteOne({ userId: sessionOrder.vendor });
       req.session.tempOrder = null;
 
+          
       req.flash("success", "Payment successful and order placed!");
       return res.redirect("/shopping");
     }
