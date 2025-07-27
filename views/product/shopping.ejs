@@ -3,6 +3,16 @@
 <section class="shopping-page">
   <div class="container">
 
+    <!-- 🔍 Search Bar -->
+    <div class="search-bar-wrapper">
+      <input
+        type="text"
+        id="product-search"
+        placeholder="🔍 Search for products..."
+        onkeyup="filterProducts()"
+      />
+    </div>
+
     <!-- 🧭 Filter Nav -->
     <nav class="top-filter-nav mt-4">
       <ul class="filter-nav-list">
@@ -18,9 +28,9 @@
       <% if (allProducts.length === 0) { %>
         <p class="placeholder">No products to show yet.</p>
       <% } else { %>
-        <div class="product-grid">
+        <div class="product-grid" id="all-products-list">
           <% allProducts.forEach(p => { %>
-            <a href="/product/<%= p._id %>" class="product-card-link">
+            <a href="/product/<%= p._id %>" class="product-card-link product-item" data-name="<%= p.name.toLowerCase() %>">
               <div class="product-card">
                 <div class="product-img">
                   <img src="<%= p.imageUrl %>" alt="<%= p.name %>">
@@ -88,6 +98,7 @@
   </div>
 </section>
 
+<!-- Scripts -->
 <script>
   function showSection(type) {
     const sections = {
@@ -114,8 +125,19 @@
       item.style.display = (type === "all" || item.classList.contains(type)) ? "block" : "none";
     });
   }
+
+  function filterProducts() {
+    const input = document.getElementById("product-search").value.toLowerCase();
+    const items = document.querySelectorAll("#all-products-list .product-item");
+
+    items.forEach(item => {
+      const name = item.dataset.name;
+      item.style.display = name.includes(input) ? "block" : "none";
+    });
+  }
 </script>
 
+<!-- Styles -->
 <style>
   body {
     font-family: 'Segoe UI', sans-serif;
@@ -123,30 +145,35 @@
     margin: 0;
   }
 
-  /* Make container responsive and centered */
-.shopping-page .container {
-  max-width: 1200px; /* Controls how wide the content stretches */
-  margin: 0 auto;    /* Center it */
-  padding: 2rem 1rem;
-}
-
-/* Adjust the product grid */
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 26px;
-}
-
-
-  .section-title {
-    font-weight: 600;
-    font-size: 1.8rem;
-    color: #222;
-    margin-bottom: 1.5rem;
-    text-align: center;
+  .shopping-page .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
   }
 
-  /* Filter Navigation */
+  .search-bar-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+
+  #product-search {
+    width: 80%;
+    max-width: 500px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: 2px solid #ffa94d;
+    border-radius: 50px;
+    outline: none;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    transition: 0.3s;
+  }
+
+  #product-search:focus {
+    border-color: #ff922b;
+    box-shadow: 0 5px 14px rgba(255, 146, 43, 0.3);
+  }
+
   .top-filter-nav {
     display: flex;
     justify-content: center;
@@ -183,24 +210,12 @@
     color: white;
     box-shadow: 0 6px 12px rgba(255, 153, 0, 0.3);
   }
-  
-  .product-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 columns on large screens */
-  gap: 26px;
-  }
 
-@media (max-width: 768px) {
   .product-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets & phones */
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 26px;
   }
-}
-
-@media (max-width: 480px) {
-  .product-grid {
-    grid-template-columns: 1fr; /* Optional: 1 column on very small phones */
-  }
-}
 
   .product-card-link {
     text-decoration: none;
@@ -216,7 +231,6 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8) !important;
   }
 
   .product-card:hover {
@@ -263,7 +277,6 @@
     display: none;
   }
 
-  /* Fresh Subfilters */
   .fresh-filter-buttons {
     margin: 20px 0;
     text-align: center;
@@ -288,14 +301,19 @@
     background-color: #2a9d8f;
   }
 
-  @media (max-width: 576px) {
-    .filter-nav-list {
-      justify-content: center;
-      flex-wrap: wrap;
+  @media (max-width: 768px) {
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
     }
-    .product-img img {
-      height: 160px;
+  }
+
+  @media (max-width: 480px) {
+    .product-grid {
+      grid-template-columns: 1fr;
+    }
+
+    #product-search {
+      width: 95%;
     }
   }
 </style>
-
