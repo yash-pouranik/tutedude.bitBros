@@ -11,7 +11,8 @@ const ejsMate = require("ejs-mate");
 const session = require("express-session");
 const flash = require("connect-flash");
 require('dotenv').config();
-
+const http = require("http");
+const { Server } = require("socket.io");
 
 
 
@@ -48,6 +49,7 @@ app.use(express.static(path.join(__dirname,'public')));
 //utils
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js")
+const server = http.createServer(app); // wrap express in HTTP server
 
 //db connection
 const dbUrl = process.env.ATLASDB_URL;
@@ -95,9 +97,30 @@ app.use((req, res, next) => {
   next();
 });
 
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000", // frontend URL
+    methods: ["GET", "POST"]
+  }
+});
+io.on("connection", (socket) => {
+  console.log("✅ New client connected:", socket.id);
+
+  socket.on("join", (userId) => {
+    socket.join(userId);
+    console.log(`📡 User ${userId} joined their room`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("❌ Client disconnected:", socket.id);
+  });
+});
+
+
 const userRoute = require("./routes/user") 
 const productRoute = require("./routes/product.js")
-const orderRoute = require("./routes/order.js")
+const orderRoute = require("./routes/order.js")(io); // pass io into router
+
 
 app.use("/", orderRoute);
 app.use("/", userRoute);
@@ -136,6 +159,16 @@ app.get("/contact", (req, res)=>{
 
 
 
+module.exports.io = io;
+
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
+
+  socket.on("joinRoom", (userId) => {
+    socket.join(userId); // user joins their own room
+    console.log(`User joined room: ${userId}`);
+  });
+});
 
 
 //error handle middlewares
@@ -148,6 +181,7 @@ app.use((err, req, res, next) => {
     res.status(status).send("page not found");
 });
 
-app.listen(5000, () => {
-    console.log("App is listning on port 5000");
+// ✅ CORRECT:
+server.listen(5000, () => {
+    console.log("App is listening on port 5000 (with Socket.io enabled)");
 });
