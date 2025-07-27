@@ -121,6 +121,7 @@
 
 <!-- ✅ LIVE SEARCH SCRIPT -->
 <script>
+  
   function showSection(type) {
     const sections = {
       all: document.getElementById('all-section'),
@@ -133,6 +134,10 @@
 
     document.querySelectorAll('.filter-link').forEach(link => link.classList.remove('active'));
     event.target.classList.add('active');
+
+    // Reset search input
+    document.getElementById("searchInput").value = "";
+    filterVisibleItems(""); // Show all on tab switch
   }
 
   function filterFresh(type) {
@@ -145,27 +150,39 @@
     items.forEach(item => {
       item.style.display = (type === "all" || item.classList.contains(type)) ? "block" : "none";
     });
+
+    filterVisibleItems(document.getElementById("searchInput").value.trim().toLowerCase());
   }
 
-  // ✅ Live frontend search (All Products)
   const searchInput = document.getElementById("searchInput");
-  const productCards = document.querySelectorAll("#all-products-grid .product-card-link");
   const noResults = document.getElementById("noResults");
 
   searchInput.addEventListener("input", function () {
     const query = this.value.toLowerCase().trim();
+    filterVisibleItems(query);
+  });
+
+  function filterVisibleItems(query) {
+    const activeSection = document.querySelector(".item-section:not(.hidden)");
+    const cards = activeSection.querySelectorAll(".product-card-link");
+
     let visibleCount = 0;
 
-    productCards.forEach(card => {
-      const name = card.getAttribute("data-name");
+    cards.forEach(card => {
+      const name = card.getAttribute("data-name") || card.querySelector("h3").innerText.toLowerCase();
       const match = name.includes(query);
       card.style.display = match ? "block" : "none";
       if (match) visibleCount++;
     });
 
-    noResults.classList.toggle("hidden", visibleCount !== 0);
-  });
+    // Show/hide "No Results" only on All tab
+    if (activeSection.id === "all-section") {
+      noResults.classList.toggle("hidden", visibleCount !== 0);
+    }
+  }
 </script>
+
+
 
 
 <style>
