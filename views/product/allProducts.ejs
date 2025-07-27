@@ -27,6 +27,7 @@
           </span>
         </p>
         <p class="mb-2"><strong>Supplier:</strong> <%= product.supplierId?.username || "N/A" %></p>
+        <p class="mb-2"><strong>Supplier Contact:</strong> <%= product.supplierId?.phone || "N/A" %></p>
         <p><span class="fw-semibold">Added On:</span> <%= product.createdAt.toDateString() %></p>
 
         <% if (currUser && currUser.userType === 'vendor') { %>
