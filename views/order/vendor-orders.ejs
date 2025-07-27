@@ -17,7 +17,13 @@
                 <span>🗓️ <%= order.createdAt.toDateString() %></span>
               </div>
               <div class="card-body">
-                <p><strong>Supplier:</strong> <%= order.supplier.username %> (<%= order.supplier.email %>)</p>
+
+                <% if (order.supplier) { %>
+                  <p><strong>Supplier:</strong> <%= order.supplier.username %> (<%= order.supplier.email %>)</p>
+                <% } else { %>
+                  <p><strong>Supplier:</strong> Not Assigned</p>
+                <% } %>
+
                 <p><strong>Status:</strong> <%= order.status %></p>
                 <p><strong>Payment:</strong> <%= order.paymentStatus %></p>
 
@@ -36,12 +42,11 @@
 
                 <div class="mt-3 text-end">
                   <strong>Total: ₹ <%= order.totalAmount.toFixed(2) %></strong>
-                  <% if(order.paymentStatus === "Pending") {%>
-                  <span>
-                    <a href="/vendor/order/<%= order._id %>/pay" class="btn btn-sm btn-success ms-3">Pay Now</a>
-
-                  </span>
-                  <% }%>
+                  <% if(order.paymentStatus === "Pending") { %>
+                    <span>
+                      <a href="/vendor/order/<%= order._id %>/pay" class="btn btn-sm btn-success ms-3">Pay Now</a>
+                    </span>
+                  <% } %>
                 </div>
               </div>
             </div>
