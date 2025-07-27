@@ -5,6 +5,8 @@ const Order = require("../model/order");
 const Product = require("../model/product");
 const User = require("../model/user");
 const {isLoggedIn}=require("../middlewares");
+const Notification = require('../model/notification'); // Adjust the path accordingly
+
 
 const razorpayInstance = require("../utils/razorpay");
 
@@ -254,28 +256,6 @@ router.get("/orders/:id/edit", isLoggedIn, async (req, res) => {
 });
 
 
-router.put("/orders/:id", isLoggedIn, async (req, res) => {
-  const { status, paymentStatus } = req.body;
-  const order = await Order.findById(req.params.id);
-
-  if (!order) return res.status(404).send("Order not found");
-
-  // Only supplier can update
-  if (order.supplier.toString() !== req.session.user._id.toString()) {
-    req.flash("error", "Unauthorized");
-    return res.redirect("/dashboard");
-  }
-
-  order.status = status;
-  order.paymentStatus = paymentStatus;
-  await order.save();
-
-  req.flash("success", "Order updated successfully!");
-  res.redirect("/supplier/orders"); // or wherever you're listing orders
-});
-
-
-
 router.get("/vendor/orders", isLoggedIn, async (req, res) => {
   try {
     const vendorId = req.session.user._id;
@@ -300,7 +280,71 @@ router.get("/vendor/orders", isLoggedIn, async (req, res) => {
   }
 });
 
+router.put("/orders/:id", isLoggedIn, async (req, res) => {
+  const { status, paymentStatus } = req.body;
+  const order = await Order.findById(req.params.id);
 
+  if (!order) return res.status(404).send("Order not found");
+
+  if (order.supplier.toString() !== req.session.user._id.toString()) {
+    req.flash("error", "Unauthorized");
+    return res.redirect("/dashboard");
+  }
+
+  order.status = status;
+  order.paymentStatus = paymentStatus;
+  await order.save();
+
+  // 🔔 Trigger notification
+  if (status === "Delivered") {
+    const Notification = require("../model/notification");
+
+    const reviewNotif = new Notification({
+      type: "review_request",
+      message: `Please review your recent order from ${req.session.user.name || 'your supplier'}.`,
+      userId: order.vendor,
+      link: `/vendor/review/${order._id}`,
+    });
+
+    await reviewNotif.save();
+
+    const vendorUser = await User.findById(order.vendor);
+    if (vendorUser) {
+      vendorUser.notifications.push(reviewNotif._id);
+      await vendorUser.save();
+    }
+  }
+
+  req.flash("success", "Order updated successfully!");
+  res.redirect("/supplier/orders");
+});
+
+// Example inside your delivery status controller
+const updateDeliveryStatus = async (req, res) => {
+  const { supplierId, vendorId, deliveryId, status } = req.body;
+
+  // 1. Update the delivery/order status logic
+  const order = await Order.findByIdAndUpdate(deliveryId, { status });
+
+  // 2. If delivery marked as "Delivered", create a review notification
+  if (status === 'Delivered') {
+    const notif = new Notification({
+      userId: vendorId,             // target user
+      type: 'reviewRequest',
+      message: `Please leave a review for your order from ${supplierId}`, // you can fetch supplier name if needed
+      link: `/review/${deliveryId}` // where the review form lives
+    });
+
+    await notif.save();
+  }
+
+  res.status(200).json({ success: true, message: 'Delivery status updated and notification sent (if delivered).' });
+};
+
+router.get('/notifications/:userId', async (req, res) => {
+  const notifications = await Notification.find({ userId: req.params.userId }).sort({ createdAt: -1 });
+  res.status(200).json(notifications);
+});
 
 
 module.exports = router;

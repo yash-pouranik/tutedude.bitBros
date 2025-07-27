@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -33,6 +34,10 @@ const userSchema = new mongoose.Schema({
     code: String,
     expiresAt: Date
   },
+  notifications: [{
+    type: Schema.Types.ObjectId,
+    ref: "Notification"
+  }],
   createdAt: {
     type: Date,
     default: Date.now
@@ -42,3 +47,4 @@ const userSchema = new mongoose.Schema({
 userSchema.index({ location: '2dsphere' });
 
 module.exports = mongoose.model('User', userSchema);
+

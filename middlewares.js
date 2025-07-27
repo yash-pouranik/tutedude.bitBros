@@ -40,12 +40,11 @@ module.exports.isLoggedIn =async (req, res, next) => {
 // middlewares/isVendor.js
 
 module.exports.isSupplier = (req, res, next) => {
-  console.log(req.session.user);
   if (req.session.user && req.session.user.userType === 'supplier') {
     return next();
-  } else {
-    return res.status(403).send('Access denied. Only vendors allowed.');
   }
+  req.flash('error', 'Only suppliers allowed');
+  res.redirect('/dashboard');
 };
 
 const mongoose = require('mongoose');
@@ -64,7 +63,9 @@ module.exports.isOwner = async (req, res, next) => {
     return res.redirect('/shopping');
   }
 
-  if (!product.supplierId.equals(req.session.user._id)) {
+  // Handles both populated and unpopulated supplierId
+  const supplierId = product.supplierId._id ? product.supplierId._id : product.supplierId;
+  if (String(supplierId) !== String(req.session.user._id)) {
     req.flash('error', 'You are not the owner of this product');
     return res.redirect('/shopping');
   }
