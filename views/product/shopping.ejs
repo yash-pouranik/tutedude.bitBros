@@ -123,10 +123,20 @@
     margin: 0;
   }
 
-  .shopping-page .container {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-  }
+  /* Make container responsive and centered */
+.shopping-page .container {
+  max-width: 1200px; /* Controls how wide the content stretches */
+  margin: 0 auto;    /* Center it */
+  padding: 2rem 1rem;
+}
+
+/* Adjust the product grid */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 26px;
+}
+
 
   .section-title {
     font-weight: 600;
