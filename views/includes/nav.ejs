@@ -1,12 +1,12 @@
 <% var active = typeof active !== 'undefined' ? active : ''; %>
 <nav class="navbar navbar-expand-lg navbar-dark custom-navbar shadow-sm">
   <div class="container-fluid">
-    <!-- Logo / Brand -->
-<a class="navbar-brand animated-logo d-flex align-items-center gap-2" href="/">
-  <img src="/images/logo.png" alt="Logo" style="height: 30px; width: auto; border-radius: 50px;" />
-  Gully Bazaar
-</a>
 
+    <!-- Logo / Brand -->
+    <a class="navbar-brand animated-logo d-flex align-items-center gap-2" href="/">
+      <img src="/images/logo.png" alt="Logo" style="height: 30px; width: auto; border-radius: 50px;" />
+      Gully Bazaar
+    </a>
 
     <!-- Toggler for mobile -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" 
@@ -20,6 +20,13 @@
         <li class="nav-item">
           <a class="nav-link <%= active === 'dashboard' ? 'active' : '' %>" href="/dashboard">📊 Dashboard</a>
         </li>
+
+        <% if (currUser && currUser.userType === 'supplier') { %>
+          <li class="nav-item">
+            <a class="nav-link <%= active === 'add-product' ? 'active' : '' %>" href="/supplier/add-product">➕ Add Product</a>
+          </li>
+        <% } %>
+
         <li class="nav-item">
           <a class="nav-link <%= active === 'home' ? 'active' : '' %>" href="/">🏠 Home</a>
         </li>
@@ -43,7 +50,7 @@
 
       <!-- Login/Logout Buttons -->
       <div class="d-flex">
-        <% if(!currUser) {%>
+        <% if(!currUser) { %>
           <a href="/login" class="btn btn-outline-light me-2">Login</a>
           <a href="/signup" class="btn btn-warning">Register</a>
         <% } else { %>
@@ -53,6 +60,7 @@
     </div>
   </div>
 </nav>
+
 
 <style>
   /* Navbar Background */

@@ -1,5 +1,24 @@
 <% layout("layouts/boilerplate") %>
 
+<% user.notifications.forEach(notif => { %>
+  <% if (notif.type === 'deliveryReview') { %>
+    <div class="alert alert-info d-flex justify-content-between align-items-center">
+      <span><%= notif.message %></span>
+      <button 
+        class="btn btn-sm btn-outline-primary review-btn"
+        data-supplier-id="<%= notif.supplierId %>"
+        data-bs-toggle="modal"
+        data-bs-target="#reviewModal">
+        Give Review
+      </button>
+    </div>
+  <% } else { %>
+    <p><a href="<%= notif.link %>"><%= notif.message %></a></p>
+  <% } %>
+<% }) %>
+
+
+
 <div class="container py-5">
   <div class="text-center mb-5">
     <h1 class="welcome-heading">
@@ -73,7 +92,84 @@
       Please <a href="/login" class="alert-link">log in</a> to view your dashboard.
     </div>
   <% } %>
+
+  <!-- Review Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="/submit-review" method="POST">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reviewModalLabel">Rate Your Supplier</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="supplierId" id="supplierIdInput">
+          <div class="mb-3">
+            <label class="form-label">Quality of Product</label>
+            <select class="form-select" name="qualityRating" required>
+              <option value="" disabled selected>Select Rating</option>
+              <option value="1">1 - Poor</option>
+              <option value="2">2</option>
+              <option value="3">3 - Average</option>
+              <option value="4">4</option>
+              <option value="5">5 - Excellent</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Delivery Timing</label>
+            <select class="form-select" name="deliveryRating" required>
+              <option value="" disabled selected>Select Rating</option>
+              <option value="1">1 - Very Late</option>
+              <option value="2">2</option>
+              <option value="3">3 - On Time</option>
+              <option value="4">4</option>
+              <option value="5">5 - Early</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Experience with Supplier</label>
+            <select class="form-select" name="experienceRating" required>
+              <option value="" disabled selected>Select Rating</option>
+              <option value="1">1 - Bad</option>
+              <option value="2">2</option>
+              <option value="3">3 - Okay</option>
+              <option value="4">4</option>
+              <option value="5">5 - Great</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Additional Comments (Optional)</label>
+            <textarea class="form-control" name="comment" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Submit Review</button>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
+
+
+</div>
+
+<script>
+  document.querySelectorAll('.review-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      const supplierId = button.getAttribute('data-supplier-id');
+      document.getElementById('supplierIdInput').value = supplierId;
+    });
+  });
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".review-btn").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const supplierId = this.getAttribute("data-supplier-id");
+        document.getElementById("supplierIdInput").value = supplierId;
+      });
+    });
+  });
+</script>
+
 
 
 

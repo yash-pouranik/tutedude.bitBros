@@ -1,0 +1,17 @@
+<h2>Leave a Review for <%= supplier.name %></h2>
+
+<form action="/review/<%= supplier._id %>" method="POST">
+  <label>Quality of Product (1-5):</label>
+  <input type="number" name="quality" min="1" max="5" required><br><br>
+
+  <label>Timely Delivery (1-5):</label>
+  <input type="number" name="timeliness" min="1" max="5" required><br><br>
+
+  <label>Overall Experience (1-5):</label>
+  <input type="number" name="experience" min="1" max="5" required><br><br>
+
+  <label>Leave your thoughts (optional):</label><br>
+  <textarea name="comment" rows="4" cols="40"></textarea><br><br>
+
+  <button type="submit">Submit Review</button>
+</form>

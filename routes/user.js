@@ -3,6 +3,8 @@ const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync");
 const User = require("../model/user")
 const {isLoggedIn} = require("../middlewares")
+const Notification = require('../model/notification'); // Adjust the path accordingly
+const Review = require("../model/review");
 
 //otp
 const otpStore = new Map();
@@ -105,9 +107,18 @@ router.get("/logout", isLoggedIn, (req, res) => {
     res.redirect("/");
 });
 
-router.get("/dashboard", isLoggedIn, (req, res)=>{
-    res.render("user/dashboard.ejs");
+router.get("/dashboard", isLoggedIn, async (req, res) => {
+  try {
+    const user = await User.findById(req.session.user._id).populate("notifications");
+
+    res.render("user/dashboard.ejs", { user });
+  } catch (err) {
+    console.error(err);
+    req.flash("error", "Unable to load dashboard");
+    res.redirect("/");
+  }
 });
+
 
 router.get('/profile/edit/:id', isLoggedIn, async (req, res) => {
   const user = await User.findById(req.params.id);
@@ -137,7 +148,86 @@ router.post("/profile/:id/edit", async (req, res) => {
   }
 });
 
+router.get("/review/:supplierId", isLoggedIn, async (req, res) => {
+  try {
+    const supplier = await User.findById(req.params.supplierId);
+    if (!supplier) {
+      req.flash("error", "Supplier not found");
+      return res.redirect("/dashboard");
+    }
+    res.render("user/reviewForm.ejs", { supplier });
+  } catch (err) {
+    console.error(err);
+    req.flash("error", "Something went wrong");
+    res.redirect("/dashboard");
+  }
+});
 
+router.post("/review/:supplierId", isLoggedIn, async (req, res) => {
+  try {
+    const { quality, timeliness, experience, comment } = req.body;
+
+    const newReview = new Review({
+      vendor: req.session.user._id,
+      supplier: req.params.supplierId,
+      quality,
+      timeliness,
+      experience,
+      comment
+    });
+
+    await newReview.save();
+
+    // Add this review to supplier's array
+    const supplier = await User.findById(req.params.supplierId);
+    supplier.supplier.reviews.push(newReview._id);
+    await supplier.save();
+
+    req.flash("success", "Review submitted!");
+    res.redirect("/dashboard");
+  } catch (err) {
+    console.error(err);
+    req.flash("error", "Failed to submit review");
+    res.redirect("/dashboard");
+  }
+});
+
+router.post("/submit-review", isLoggedIn, async (req, res) => {
+  const { supplierId, qualityRating, deliveryRating, experienceRating, comment } = req.body;
+
+  try {
+    const review = new Review({
+      supplier: supplierId,
+      vendor: req.session.user._id,
+      qualityRating,
+      deliveryRating,
+      experienceRating,
+      comment,
+    });
+
+    await review.save();
+
+    const supplier = await User.findById(supplierId);
+    supplier.supplier.reviews.push(review._id);
+
+    const notif = new Notification({
+      type: "info",
+      message: "🎉 You received a new review!",
+      userId: supplierId,
+    });
+
+    await notif.save();
+    supplier.notifications.push(notif._id);
+    await supplier.save();
+
+    req.flash("success", "Review submitted successfully!");
+    res.redirect("/dashboard");
+  } catch (err) {
+    console.error(err);
+    req.flash("error", "Something went wrong while submitting the review.");
+    res.redirect("/dashboard");
+  }
+});
 
 
 module.exports = router;
