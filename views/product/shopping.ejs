@@ -3,29 +3,28 @@
 <section class="shopping-page">
   <div class="container">
 
-    <!-- 🔍 Search Bar -->
-    <div class="search-bar-container mb-4">
-      <form  class="search-form">
-        <input
-          type="text"
-          name="q"
-          id="searchInput"
-          placeholder="🔍 Search products..."
-          class="search-input"
-          required
-        />
-        <button type="submit" class="search-button">Search</button>
-      </form>
-    </div>
+    <!-- 🔍 Search Bar & Sort Option -->
+    <div class="search-sort-wrapper animated-glass">
+      <input
+        id="productSearch"
+        type="text"
+        class="form-control search-input tough-input"
+        placeholder="🔍 Search by name or category (e.g. milk, packed, dairy)"
+        oninput="handleSearch()"
+      >
 
-    <!-- 🧭 Filter Nav -->
-    <nav class="top-filter-nav mt-4">
-      <ul class="filter-nav-list">
-        <li><a href="#" class="filter-link active" onclick="showSection('all')">🥕 All</a></li>
-        <li><a href="#" class="filter-link" onclick="showSection('fresh')">🌱 Fresh</a></li>
-        <li><a href="#" class="filter-link" onclick="showSection('packed')">📦 Packed</a></li>
-      </ul>
-    </nav>
+      <!-- Sort by Closest - Hidden unless searching -->
+      <div id="sortClosestContainer" class="form-check sort-check animated-fade" style="display: none;">
+        <input class="form-check-input tough-check" type="checkbox" id="sortClosest" onchange="handleSearch()">
+        <label class="form-check-label ms-2" for="sortClosest">Sort by Closest 📍</label>
+      </div>
+
+      <!-- Sort by Price - Always visible -->
+      <div id="sortPriceContainer" class="form-check sort-check animated-fade">
+        <input class="form-check-input tough-check" type="checkbox" id="sortPrice" onchange="handleSearch()">
+        <label class="form-check-label ms-2" for="sortPrice">Sort by Price 💰</label>
+      </div>
+    </div>
 
     <!-- 📦 All Products -->
     <div id="all-section" class="item-section">
@@ -35,7 +34,11 @@
       <% } else { %>
         <div class="product-grid" id="all-products-grid">
           <% allProducts.forEach(p => { %>
-            <a href="/product/<%= p._id %>" class="product-card-link" data-name="<%= p.name.toLowerCase() %>">
+            <a href="/product/<%= p._id %>"
+               class="product-card-link"
+               data-name="<%= p.name.toLowerCase() %>"
+               data-category="<%= p.category || '' %>"
+               data-distance="<%= p.distance || 99999 %>">
               <div class="product-card">
                 <div class="product-img">
                   <img src="<%= p.imageUrl %>" alt="<%= p.name %>">
@@ -57,133 +60,57 @@
       <% } %>
     </div>
 
-    <!-- 🥬 Fresh Section -->
-    <div id="fresh-section" class="item-section hidden">
-      <h2 class="section-title">Fresh Products</h2>
-      <div class="fresh-filter-buttons">
-        <button onclick="filterFresh('all')" class="fresh-btn active">All</button>
-        <button onclick="filterFresh('veggies')" class="fresh-btn">Veggies</button>
-        <button onclick="filterFresh('dairy')" class="fresh-btn">Dairy</button>
-      </div>
-      <div class="product-grid">
-        <% freshProducts.forEach(p => { %>
-          <a href="/product/<%= p._id %>" class="product-card-link fresh-item <%= p.freshCategory %>">
-            <div class="product-card">
-              <div class="product-img">
-                <img src="<%= p.imageUrl %>" alt="<%= p.name %>">
-              </div>
-              <div class="product-details">
-                <h3><%= p.name %></h3>
-                <p class="price">₹<%= p.price %> per <%= p.unit %></p>
-                  <% if (p.distance) { %>
-                    <p>Distance: <%= p.distance %> km</p>
-                  <% } else { %>
-                    <p>Distance: N/A</p>
-                  <% } %>
-              </div>
-            </div>
-          </a>
-        <% }) %>
-      </div>
-    </div>
-
-    <!-- 📦 Packed Section -->
-    <div id="packed-section" class="item-section hidden">
-      <h2 class="section-title">Packed Products</h2>
-      <% if (packedProducts.length === 0) { %>
-        <p class="placeholder">No packed products available yet.</p>
-      <% } else { %>
-        <div class="product-grid">
-          <% packedProducts.forEach(p => { %>
-            <a href="/product/<%= p._id %>" class="product-card-link">
-              <div class="product-card">
-                <div class="product-img">
-                  <img src="<%= p.imageUrl %>" alt="<%= p.name %>">
-                </div>
-                <div class="product-details">
-                  <h3><%= p.name %></h3>
-                  <p class="price">₹<%= p.price %> per <%= p.unit %></p>
-                  <% if (p.distance) { %>
-                    <p>Distance: <%= p.distance %> km</p>
-                  <% } else { %>
-                    <p>Distance: N/A</p>
-                  <% } %>
-                </div>
-              </div>
-            </a>
-          <% }) %>
-        </div>
-      <% } %>
-    </div>
-
   </div>
 </section>
 
-<!-- ✅ LIVE SEARCH SCRIPT -->
 <script>
-  
-  function showSection(type) {
-    const sections = {
-      all: document.getElementById('all-section'),
-      fresh: document.getElementById('fresh-section'),
-      packed: document.getElementById('packed-section'),
-    };
+function handleSearch() {
+  const query = document.getElementById('productSearch').value.trim().toLowerCase();
+  const sortClosest = document.getElementById('sortClosest').checked;
+  const sortPrice = document.getElementById('sortPrice').checked;
 
-    Object.values(sections).forEach(section => section.classList.add('hidden'));
-    sections[type].classList.remove('hidden');
+  const sortClosestContainer = document.getElementById('sortClosestContainer');
+  sortClosestContainer.style.display = query ? 'inline-flex' : 'none';
 
-    document.querySelectorAll('.filter-link').forEach(link => link.classList.remove('active'));
-    event.target.classList.add('active');
+  const activeSection = document.querySelector('.item-section:not(.hidden)');
+  const allCards = Array.from(activeSection.querySelectorAll('.product-card-link'));
+  let matchingCards = [];
 
-    // Reset search input
-    document.getElementById("searchInput").value = "";
-    filterVisibleItems(""); // Show all on tab switch
-  }
+  allCards.forEach(card => {
+    const name = card.dataset.name || '';
+    const category = card.dataset.category || '';
+    const matchesSearch = !query || name.includes(query) || category.includes(query);
 
-  function filterFresh(type) {
-    const items = document.querySelectorAll(".fresh-item");
-    const buttons = document.querySelectorAll(".fresh-btn");
-
-    buttons.forEach(btn => btn.classList.remove("active"));
-    event.target.classList.add("active");
-
-    items.forEach(item => {
-      item.style.display = (type === "all" || item.classList.contains(type)) ? "block" : "none";
-    });
-
-    filterVisibleItems(document.getElementById("searchInput").value.trim().toLowerCase());
-  }
-
-  const searchInput = document.getElementById("searchInput");
-  const noResults = document.getElementById("noResults");
-
-  searchInput.addEventListener("input", function () {
-    const query = this.value.toLowerCase().trim();
-    filterVisibleItems(query);
+    card.style.display = matchesSearch ? '' : 'none';
+    if (matchesSearch) matchingCards.push(card);
   });
 
-  function filterVisibleItems(query) {
-    const activeSection = document.querySelector(".item-section:not(.hidden)");
-    const cards = activeSection.querySelectorAll(".product-card-link");
+  if (sortPrice || (sortClosest && query)) {
+    const grid = activeSection.querySelector('.product-grid');
 
-    let visibleCount = 0;
-
-    cards.forEach(card => {
-      const name = card.getAttribute("data-name") || card.querySelector("h3").innerText.toLowerCase();
-      const match = name.includes(query);
-      card.style.display = match ? "block" : "none";
-      if (match) visibleCount++;
-    });
-
-    // Show/hide "No Results" only on All tab
-    if (activeSection.id === "all-section") {
-      noResults.classList.toggle("hidden", visibleCount !== 0);
+    if (sortClosest && query) {
+      matchingCards.sort((a, b) => {
+        return parseFloat(a.dataset.distance) - parseFloat(b.dataset.distance);
+      });
     }
+
+    if (sortPrice) {
+      matchingCards.sort((a, b) => {
+        const priceA = parseFloat(a.querySelector('.price').innerText.replace(/[^\d.]/g, ''));
+        const priceB = parseFloat(b.querySelector('.price').innerText.replace(/[^\d.]/g, ''));
+        return priceA - priceB;
+      });
+    }
+
+    matchingCards.forEach(card => grid.appendChild(card));
   }
+
+  const noResults = activeSection.querySelector('.placeholder');
+  if (noResults) {
+    noResults.style.display = matchingCards.length === 0 ? '' : 'none';
+  }
+}
 </script>
-
-
-
 
 <style>
   body {
@@ -192,20 +119,29 @@
     margin: 0;
   }
 
-  /* Make container responsive and centered */
-.shopping-page .container {
-  max-width: 1200px; /* Controls how wide the content stretches */
-  margin: 0 auto;    /* Center it */
-  padding: 2rem 1rem;
-}
+  .shopping-page .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
 
-/* Adjust the product grid */
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 26px;
-}
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 26px;
+  }
 
+  @media (max-width: 768px) {
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .product-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 
   .section-title {
     font-weight: 600;
@@ -214,62 +150,6 @@
     margin-bottom: 1.5rem;
     text-align: center;
   }
-
-  /* Filter Navigation */
-  .top-filter-nav {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 30px;
-  }
-
-  .filter-nav-list {
-    display: flex;
-    gap: 15px;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    flex-wrap: wrap;
-  }
-
-  .filter-link {
-    text-decoration: none;
-    padding: 10px 22px;
-    background: #f0f0f0;
-    border-radius: 30px;
-    color: #333;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06);
-  }
-
-  .filter-link:hover {
-    background-color: #ffe8b3;
-    color: #e67e22;
-  }
-
-  .filter-link.active {
-    background-color: #ffa94d;
-    color: white;
-    box-shadow: 0 6px 12px rgba(255, 153, 0, 0.3);
-  }
-  
-  .product-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 columns on large screens */
-  gap: 26px;
-  }
-
-@media (max-width: 768px) {
-  .product-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets & phones */
-  }
-}
-
-@media (max-width: 480px) {
-  .product-grid {
-    grid-template-columns: 1fr; /* Optional: 1 column on very small phones */
-  }
-}
 
   .product-card-link {
     text-decoration: none;
@@ -332,88 +212,94 @@
     display: none;
   }
 
-  /* Fresh Subfilters */
-  .fresh-filter-buttons {
-    margin: 20px 0;
-    text-align: center;
+  .search-sort-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 12px rgba(255, 169, 77, 0.3);
+    animation: slideFadeIn 0.8s ease forwards;
   }
 
-  .fresh-btn {
-    padding: 8px 18px;
-    margin: 5px;
-    border: none;
-    border-radius: 25px;
-    background: #88d498;
-    color: white;
+  .search-input.tough-input {
+    flex: 1;
+    min-width: 250px;
+    max-width: 360px;
+    padding: 12px 16px;
+    font-size: 1rem;
     font-weight: 500;
+    border-radius: 12px;
+    border: 1px solid #ffa94d;
+    background-color: #fff;
     transition: all 0.3s ease;
+    box-shadow: inset 0 0 4px rgba(255, 153, 0, 0.2);
   }
 
-  .fresh-btn:hover {
-    background-color: #57cc99;
+  .search-input.tough-input:focus {
+    outline: none;
+    border-color: #e67e22;
+    box-shadow: 0 0 0 4px rgba(255, 169, 77, 0.25);
   }
 
-  .fresh-btn.active {
-    background-color: #2a9d8f;
+  .sort-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: fadeInUp 0.7s ease forwards;
+    animation-delay: 0.3s;
+  }
+
+  .tough-check {
+    accent-color: #ffa94d;
+    width: 1.1rem;
+    height: 1.1rem;
+    box-shadow: 0 0 4px rgba(255, 169, 77, 0.5);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .tough-check:checked {
+    box-shadow: 0 0 10px rgba(255, 169, 77, 0.8);
+  }
+
+  .form-check-label {
+    font-weight: 600;
+    color: #333;
   }
 
   @media (max-width: 576px) {
-    .filter-nav-list {
-      justify-content: center;
-      flex-wrap: wrap;
+    .search-sort-wrapper {
+      flex-direction: column;
+      align-items: stretch;
     }
+
     .product-img img {
       height: 160px;
     }
   }
 
-  /* Search Bar */
-.search-bar-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 2rem;
-  padding: 0 1rem;
-}
+  @keyframes slideFadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
 
-.search-form {
-  display: flex;
-  width: 100%;
-  max-width: 500px;
-  background: #ffffff;
-  border-radius: 50px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: box-shadow 0.3s ease;
-}
-
-.search-input {
-  flex-grow: 1;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 50px 0 0 50px;
-  font-size: 1rem;
-  outline: none;
-  background: #fff;
-}
-
-.search-button {
-  padding: 12px 22px;
-  background-color: #ffa94d;
-  color: white;
-  border: none;
-  border-radius: 0 50px 50px 0;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.search-button:hover {
-  background-color: #ff922b;
-}
-
-.search-input::placeholder {
-  color: #aaa;
-}
-
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 </style>
-
