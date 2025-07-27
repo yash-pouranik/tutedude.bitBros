@@ -1,68 +1,75 @@
-form {
-  width: 100%;
-  max-width: 800px; /* increased from 600px */
-  margin: 50px auto;
-  padding: 40px;
-  background: #fff;
+.form-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #f2f9f2;
   border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-  font-family: "Segoe UI", sans-serif;
-  box-sizing: border-box;
-  font-family: "Winky Rough", sans-serif;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
 
-form label {
-  display: block;
-  margin-bottom: 6px;
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 0.3rem;
   font-weight: 600;
-  color: #333;
+  color: #2e5339;
 }
 
-form input[type="text"],
-form input[type="number"],
-form select,
-form textarea {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 20px;
-  border-radius: 8px;
+input[type="text"],
+input[type="number"],
+input[type="file"],
+select,
+textarea {
+  padding: 0.6rem;
+  border-radius: 6px;
   border: 1px solid #ccc;
-  font-size: 15px;
-  transition: 0.3s;
+  font-size: 1rem;
+  font-family: inherit;
 }
 
-form input[type="text"]:focus,
-form input[type="number"]:focus,
-form select:focus,
-form textarea:focus {
-  border-color: #4CAF50;
-  outline: none;
+textarea {
+  resize: vertical;
+  min-height: 80px;
 }
 
-form input[type="checkbox"] {
-  margin-right: 10px;
+.checkbox-group {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-form button {
-  background-color: #4CAF50;
+button[type="submit"] {
+  padding: 0.8rem;
+  background-color: #54b267;
   color: white;
-  padding: 12px 20px;
+  font-weight: 600;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 16px;
-  transition: 0.3s;
+  transition: background-color 0.3s ease;
 }
 
-form button:hover {
-  background-color: #45a049;
+button[type="submit"]:hover {
+  background-color: #439c58;
 }
 
+/* Responsive Design */
+@media (max-width: 600px) {
+  .form-container {
+    padding: 1rem;
+  }
 
-@media (max-width: 768px) {
-  form {
-    padding: 25px;
-    margin: 20px;
+  label, input, select, textarea, button {
+    font-size: 1rem;
   }
 }
+
