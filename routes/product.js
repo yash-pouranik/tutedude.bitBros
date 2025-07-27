@@ -6,7 +6,8 @@ const { isSupplier, isLoggedIn, isOwner } = require('../middlewares');
 
 
 const multer = require("multer");
-const upload = multer();
+const {storage} = require("../configCloud");
+const upload = multer({ storage });
 
 
 // GET route to render Add Product form
@@ -20,19 +21,11 @@ const Product = require("../model/product");
 const Cart = require("../model/cart");
 
 // POST: Add a new product for a supplier
-router.post("/supplier/:supplierId/add-product", upload.none(), async (req, res) => {
+router.post("/supplier/:supplierId/add-product", upload.single("image"), async (req, res) => {
   try {
-    const { supplierId } = req.params;
     const {
-      name,
-      description,
-      type,
-      freshCategory,
-      price,
-      quantity,
-      unit,
-      imageUrl,
-      availability,
+      name, description, type, freshCategory,
+      price, quantity, unit, availability
     } = req.body;
 
     const newProduct = new Product({
@@ -43,19 +36,19 @@ router.post("/supplier/:supplierId/add-product", upload.none(), async (req, res)
       price,
       quantity,
       unit,
-      imageUrl: imageUrl || null,
-      availability: availability === "on", // checkbox returns "on" if checked
+      imageUrl: req.file?.path || null,
+      availability: availability === "on",
       supplierId: req.session.user._id,
     });
 
     await newProduct.save();
-
-    res.redirect(`/dashboard`); // Or wherever you want
+    res.redirect(`/dashboard`);
   } catch (err) {
     console.error("Error adding product:", err);
     res.status(500).send("Internal Server Error");
   }
 });
+
 
 
 router.get("/product/:id", async (req, res) => {
