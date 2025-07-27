@@ -10,7 +10,7 @@ const {storage} = require("../configCloud");
 const upload = multer({ storage });
 
 
-router.get('/shopping', async (req, res) => {
+router.get('/shopping', isLoggedIn, async (req, res) => {
   try {
     const allProducts = await Product.find({ availability: true });
 
@@ -20,9 +20,20 @@ router.get('/shopping', async (req, res) => {
     const veggies = freshProducts.filter(p => p.freshCategory === 'veggies');
     const dairy = freshProducts.filter(p => p.freshCategory === 'dairy');
 
+    const loggedInUser = req.session.user;
+
+
     for (const product of allProducts) {
-      const productOwner = await User.findById(product.ownerId); // Assuming you have ownerId
-      product.distance = await getDistanceFromMapbox(req.session.user.address, productOwner.address);
+      const productOwner = await User.findById(product.supplierId); // changed from ownerId to supplierId if you're using that
+
+      if (loggedInUser?.address && productOwner?.address) {
+        product.distance = await getDistanceFromMapbox(
+          loggedInUser.address,
+          productOwner.address
+        );
+      } else {
+        product.distance = null; // fallback
+      }
     }
 
 
