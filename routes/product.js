@@ -149,6 +149,8 @@ router.post("/supplier/:supplierId/add-product", isLoggedIn, upload.single("imag
 
 
 
+const Review = require("../model/review");
+
 router.get("/product/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -158,14 +160,18 @@ router.get("/product/:id", async (req, res) => {
       return res.status(404).send("Product not found");
     }
 
+    const reviews = await Review.find({ product: id }).populate("fromUser", "username");
+
     res.render("product/allProducts", {
-      product
+      product,
+      reviews
     });
   } catch (err) {
     console.error(err);
     res.status(500).send("Something went wrong");
   }
 });
+
 
 router.get('/supplier/manage-products/:id', async (req, res) => {
   try {
