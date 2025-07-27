@@ -255,46 +255,36 @@ module.exports = function(io) {
 
   // Update order status
   router.put("/orders/:id", isLoggedIn, async (req, res) => {
-    const { status, paymentStatus } = req.body;
-    const order = await Order.findById(req.params.id);
+  const { status, paymentStatus } = req.body;
+  const order = await Order.findById(req.params.id);
 
-    if (!order) return res.status(404).send("Order not found");
+  if (!order) return res.status(404).send("Order not found");
 
-    if (order.supplier.toString() !== req.session.user._id.toString()) {
-      req.flash("error", "Unauthorized");
-      return res.redirect("/dashboard");
-    }
+  if (order.supplier.toString() !== req.session.user._id.toString()) {
+    req.flash("error", "Unauthorized");
+    return res.redirect("/dashboard");
+  }
 
-    order.status = status;
-    order.paymentStatus = paymentStatus;
-    await order.save();
+  order.status = status;
+  order.paymentStatus = paymentStatus;
+  await order.save();
 
-    // 🔔 Trigger notification
-    if (status === "Delivered") {
-      const reviewNotif = new Notification({
-        type: "review_request",
-        message: `Please review your recent order from ${req.session.user.name || 'your supplier'}.`,
-        user: order.vendor,
-        link: `/vendor/review/${order._id}`,
-      });
-
-      await reviewNotif.save();
-
-      const vendorUser = await User.findById(order.vendor);
-      if (vendorUser) {
-        vendorUser.notifications.push(reviewNotif._id);
-        await vendorUser.save();
-      }
-
-      // Example socket event (if you want to use io)
-      io.to(order.vendor.toString()).emit("newNotification", {
-        message: "Supplier updated your order status!"
-      });
-    }
-
-    req.flash("success", "Order updated successfully!");
-    res.redirect("/supplier/orders");
+  // 🔔 Trigger notification if delivered
+  if (status === "Delivered") {
+  const notification = new Notification({
+    sender: order.supplier,
+    receiver: order.vendor,
+    type: "delivered",
+    message: `Your order #${order._id} has been marked as Delivered. Please leave a review.`,
+    link: `/vendor/orders/${order._id}/review`, // 🔗 review link
   });
+
+  await notification.save();
+}
+
+  req.flash("success", "Order updated successfully!");
+  res.redirect("/supplier/orders");
+});
 
   // Example delivery status controller (if needed)
   router.post("/update-delivery-status", async (req, res) => {
@@ -318,11 +308,6 @@ module.exports = function(io) {
     res.status(200).json({ success: true, message: 'Delivery status updated and notification sent (if delivered).' });
   });
 
-  // Notifications API
-  router.get('/notifications/:userId', async (req, res) => {
-    const notifications = await Notification.find({ userId: req.params.userId }).sort({ createdAt: -1 });
-    res.status(200).json(notifications);
-  });
 
   return router;
 };

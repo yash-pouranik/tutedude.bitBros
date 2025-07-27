@@ -1,0 +1,23 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container my-5">
+  <h2 class="text-center mb-4">🔔 Your Notifications</h2>
+  
+  <% if (notifications.length === 0) { %>
+    <div class="alert alert-info text-center">No notifications found.</div>
+  <% } else { %>
+    <ul class="list-group">
+      <% notifications.forEach(notif => { %>
+        <li class="list-group-item d-flex justify-content-between align-items-center <%= !notif.isRead ? 'list-group-item-warning fw-bold' : '' %>">
+          <div>
+            <strong>From:</strong> <%= notif.sender?.name || 'System' %><br>
+            <%= notif.message %>
+          </div>
+          <% if (notif.link) { %>
+            <a href="<%= notif.link %>" class="btn btn-sm btn-outline-primary">View</a>
+          <% } %>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</div>
