@@ -28,7 +28,7 @@
 
     <!-- 📦 All Products -->
     <div id="all-section" class="item-section">
-      <h2 class="section-title">All Products</h2>
+      <h2 id="allProductsHeading" class="section-title mt-3 mb-3">All Products</h2>
       <% if (allProducts.length === 0) { %>
         <p class="placeholder">No products to show yet.</p>
       <% } else { %>
@@ -64,16 +64,26 @@
 </section>
 
 <script>
+let originalOrder = [];
+
+window.addEventListener('DOMContentLoaded', () => {
+  const grid = document.getElementById('all-products-grid');
+  originalOrder = Array.from(grid.querySelectorAll('.product-card-link'));
+});
+
 function handleSearch() {
   const query = document.getElementById('productSearch').value.trim().toLowerCase();
   const sortClosest = document.getElementById('sortClosest').checked;
   const sortPrice = document.getElementById('sortPrice').checked;
 
   const sortClosestContainer = document.getElementById('sortClosestContainer');
-  sortClosestContainer.style.display = query ? 'inline-flex' : 'none';
+  const allProductsHeading = document.getElementById('allProductsHeading');
 
-  const activeSection = document.querySelector('.item-section:not(.hidden)');
-  const allCards = Array.from(activeSection.querySelectorAll('.product-card-link'));
+  sortClosestContainer.style.display = query ? 'inline-flex' : 'none';
+  allProductsHeading.style.display = query ? 'none' : '';
+
+  const grid = document.getElementById('all-products-grid');
+  const allCards = Array.from(grid.querySelectorAll('.product-card-link'));
   let matchingCards = [];
 
   allCards.forEach(card => {
@@ -85,9 +95,8 @@ function handleSearch() {
     if (matchesSearch) matchingCards.push(card);
   });
 
-  if (sortPrice || (sortClosest && query)) {
-    const grid = activeSection.querySelector('.product-grid');
-
+  // Sort logic
+  if (matchingCards.length) {
     if (sortClosest && query) {
       matchingCards.sort((a, b) => {
         return parseFloat(a.dataset.distance) - parseFloat(b.dataset.distance);
@@ -102,22 +111,71 @@ function handleSearch() {
       });
     }
 
+    // If no sort is applied, revert to original order
+    if (!sortPrice && !(sortClosest && query)) {
+      matchingCards = originalOrder.filter(card => card.style.display !== 'none');
+    }
+
     matchingCards.forEach(card => grid.appendChild(card));
   }
 
-  const noResults = activeSection.querySelector('.placeholder');
+  const noResults = document.getElementById('noResults');
   if (noResults) {
-    noResults.style.display = matchingCards.length === 0 ? '' : 'none';
+    noResults.classList.toggle('hidden', matchingCards.length > 0);
   }
 }
 </script>
 
+
 <style>
   body {
-    font-family: 'Segoe UI', sans-serif;
+      font-family: "Winky Rough", sans-serif;
     background: linear-gradient(to bottom, #fffdf5, #fef6eb);
     margin: 0;
   }
+
+  @keyframes fadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#allProductsHeading, h2 {
+  padding: 0;
+  font-weight: 600;
+  font-size: 2rem;
+  color: #333;
+  background-color: #a0d1ae;
+  border-radius: 50px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+
+  /* Animation */
+  opacity: 0;
+  animation: fadeSlideIn 0.6s ease forwards;
+  animation-delay: 0.2s;
+}
+
+@keyframes zoomFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+#allProductsHeading {
+  animation: zoomFadeIn 0.6s ease forwards;
+}
+
 
   .shopping-page .container {
     max-width: 1200px;
