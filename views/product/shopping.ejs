@@ -38,6 +38,11 @@
                 <div class="product-details">
                   <h3><%= p.name %></h3>
                   <p class="price">₹<%= p.price %> per <%= p.unit %></p>
+                  <% if (p.distance) { %>
+                    <p>Distance: <%= p.distance %> km</p>
+                  <% } else { %>
+                    <p>Distance: N/A</p>
+                  <% } %>
                 </div>
               </div>
             </a>
@@ -86,7 +91,9 @@
                 </div>
                 <div class="product-details">
                   <h3><%= p.name %></h3>
+                  
                   <p class="price">₹<%= p.price %> per <%= p.unit %></p>
+                  <p>Distance: <%= p.distance ? p.distance + " km" : "N/A" %>yash</p>
                 </div>
               </div>
             </a>

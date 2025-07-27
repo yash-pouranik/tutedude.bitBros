@@ -10,6 +10,36 @@ const {storage} = require("../configCloud");
 const upload = multer({ storage });
 
 
+const axios = require("axios");
+const MAPBOX_TOKEN = process.env.MAPBOX_TOKEN; // Add this line
+
+async function getDistanceFromMapbox(start, end) {
+  if (
+    !start.latitude || !start.longitude ||
+    !end.latitude || !end.longitude
+  ) {
+    console.log("getting null")
+    return null; // Coordinates missing
+  }
+
+  const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${start.longitude},${start.latitude};${end.longitude},${end.latitude}?access_token=${MAPBOX_TOKEN}&geometries=geojson`;
+
+  try {
+    const response = await axios.get(url);
+    const distanceInMeters = response.data.routes[0]?.distance;
+    if (!distanceInMeters) return null;
+    const distanceInKm = (distanceInMeters / 1000).toFixed(2); // convert to km
+    console.log("distanceInKm")
+    return distanceInKm;
+  } catch (err) {
+    console.error("Mapbox distance error:", err.message);
+    return null;
+  }
+}
+
+
+
+
 router.get('/shopping', isLoggedIn, async (req, res) => {
   try {
     const allProducts = await Product.find({ availability: true });
@@ -31,6 +61,13 @@ router.get('/shopping', isLoggedIn, async (req, res) => {
           loggedInUser.address,
           productOwner.address
         );
+        console.log({
+  product: product.name,
+  supplier: productOwner?.username,
+  userCoords: loggedInUser?.address,
+  supplierCoords: productOwner?.address,
+  distance: product.distance
+});
       } else {
         product.distance = null; // fallback
       }
@@ -281,17 +318,7 @@ router.post('/products/:id/delete', isLoggedIn, isSupplier, isOwner, async (req,
 });
 
 
-const axios = require("axios");
 
-async function getDistanceFromMapbox(start, end) {
-  const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${start.longitude},${start.latitude};${end.longitude},${end.latitude}?access_token=${MAPBOX_TOKEN}&geometries=geojson`;
-
-  const response = await axios.get(url);
-  const distanceInMeters = response.data.routes[0].distance;
-  const distanceInKm = (distanceInMeters / 1000).toFixed(2); // convert to km
-
-  return distanceInKm;
-}
 
 
 
