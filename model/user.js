@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
     enum: ['vendor', 'supplier'],
     required: true
   },
+  totalEarnings: {
+    type: Number,
+    default: 0,
+  },
   address: {
     street: { type: String, default: "" },
     city: { type: String, default: "" },
@@ -33,8 +37,6 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-// Create geospatial index
 userSchema.index({ location: '2dsphere' });
 
 module.exports = mongoose.model('User', userSchema);
-

@@ -29,12 +29,34 @@
     </div>
   </div>
 
-  <div class="flex-column">
-    <label>Address</label>
-    <div class="inputForm">
-      <input type="text" class="input" name="address" placeholder="Enter your address" required />
-    </div>
+<div class="flex-column">
+  <label>Street</label>
+  <div class="inputForm">
+    <input type="text" class="input" name="address[street]" placeholder="Street" required />
   </div>
+</div>
+
+<div class="flex-column">
+  <label>City</label>
+  <div class="inputForm">
+    <input type="text" class="input" name="address[city]" placeholder="City" required />
+  </div>
+</div>
+
+<div class="flex-column">
+  <label>State</label>
+  <div class="inputForm">
+    <input type="text" class="input" name="address[state]" placeholder="State" required />
+  </div>
+</div>
+
+<div class="flex-column">
+  <label>Pincode</label>
+  <div class="inputForm">
+    <input type="text" class="input" name="address[pincode]" placeholder="Pincode" required />
+  </div>
+</div>
+
 
   <button class="button-submit">Sign Up</button>
   <p class="p">Already have an account? <a href="/login" class="span">Login</a></p>
