@@ -3,11 +3,42 @@
 const express = require('express');
 const router = express.Router();
 const { isSupplier, isLoggedIn, isOwner } = require('../middlewares');
-
+const User = require("../model/user")
 
 const multer = require("multer");
 const {storage} = require("../configCloud");
 const upload = multer({ storage });
+
+
+router.get('/shopping', async (req, res) => {
+  try {
+    const allProducts = await Product.find({ availability: true });
+
+    // Filtered lists
+    const freshProducts = allProducts.filter(p => p.type === 'fresh');
+    const packedProducts = allProducts.filter(p => p.type === 'packed');
+    const veggies = freshProducts.filter(p => p.freshCategory === 'veggies');
+    const dairy = freshProducts.filter(p => p.freshCategory === 'dairy');
+
+    for (const product of allProducts) {
+      const productOwner = await User.findById(product.ownerId); // Assuming you have ownerId
+      product.distance = await getDistanceFromMapbox(req.session.user.address, productOwner.address);
+    }
+
+
+    res.render('product/shopping', {
+      allProducts,
+      freshProducts,
+      packedProducts,
+      veggies,
+      dairy
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
+});
+
 
 
 // GET route to render Add Product form
@@ -16,12 +47,13 @@ router.get('/supplier/add-product', isSupplier, (req, res) => {
 });
 
 
+
 const Supplier = require("../model/user");
 const Product = require("../model/product");
 const Cart = require("../model/cart");
 
 // POST: Add a new product for a supplier
-router.post("/supplier/:supplierId/add-product", upload.single("image"), async (req, res) => {
+router.post("/supplier/:supplierId/add-product", isLoggedIn, upload.single("image"), async (req, res) => {
   try {
     const {
       name, description, type, freshCategory,
@@ -236,5 +268,22 @@ router.post('/products/:id/delete', isLoggedIn, isSupplier, isOwner, async (req,
     res.redirect('/shopping');
   }
 });
+
+
+const axios = require("axios");
+
+async function getDistanceFromMapbox(start, end) {
+  const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${start.longitude},${start.latitude};${end.longitude},${end.latitude}?access_token=${MAPBOX_TOKEN}&geometries=geojson`;
+
+  const response = await axios.get(url);
+  const distanceInMeters = response.data.routes[0].distance;
+  const distanceInKm = (distanceInMeters / 1000).toFixed(2); // convert to km
+
+  return distanceInKm;
+}
+
+
+
+
 
 module.exports = router;

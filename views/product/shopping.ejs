@@ -3,6 +3,16 @@
 <section class="shopping-page">
   <div class="container">
 
+    <!-- 🔍 Search Bar -->
+    <div class="search-bar-wrapper">
+      <input
+        type="text"
+        id="product-search"
+        placeholder="🔍 Search for products..."
+        onkeyup="filterProducts()"
+      />
+    </div>
+
     <!-- 🧭 Filter Nav -->
     <nav class="top-filter-nav mt-4">
       <ul class="filter-nav-list">
@@ -18,9 +28,9 @@
       <% if (allProducts.length === 0) { %>
         <p class="placeholder">No products to show yet.</p>
       <% } else { %>
-        <div class="product-grid">
+        <div class="product-grid" id="all-products-list">
           <% allProducts.forEach(p => { %>
-            <a href="/product/<%= p._id %>" class="product-card-link">
+            <a href="/product/<%= p._id %>" class="product-card-link product-item" data-name="<%= p.name.toLowerCase() %>">
               <div class="product-card">
                 <div class="product-img">
                   <img src="<%= p.imageUrl %>" alt="<%= p.name %>">
@@ -88,6 +98,7 @@
   </div>
 </section>
 
+<!-- Scripts -->
 <script>
   function showSection(type) {
     const sections = {
@@ -114,8 +125,32 @@
       item.style.display = (type === "all" || item.classList.contains(type)) ? "block" : "none";
     });
   }
+
+  function filterProducts() {
+    const input = document.getElementById("product-search").value.toLowerCase();
+
+    // All Products
+    document.querySelectorAll("#all-products-list .product-item").forEach(item => {
+      const name = item.dataset.name;
+      item.style.display = name.includes(input) ? "block" : "none";
+    });
+
+    // Fresh Products
+    document.querySelectorAll("#fresh-section .fresh-item").forEach(item => {
+      const name = item.querySelector("h3").innerText.toLowerCase();
+      item.style.display = name.includes(input) ? "block" : "none";
+    });
+
+    // Packed Products
+    document.querySelectorAll("#packed-section .product-card-link").forEach(item => {
+      const name = item.querySelector("h3").innerText.toLowerCase();
+      item.style.display = name.includes(input) ? "block" : "none";
+    });
+  }
 </script>
 
+
+<!-- Styles -->
 <style>
   body {
     font-family: 'Segoe UI', sans-serif;
@@ -130,6 +165,13 @@
   padding: 2rem 1rem;
 }
 
+/* Adjust the product grid */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 26px;
+}
+
 
   .section-title {
     font-weight: 600;
@@ -139,7 +181,11 @@
     text-align: center;
   }
 
-  /* Filter Navigation */
+  #product-search:focus {
+    border-color: #ff922b;
+    box-shadow: 0 5px 14px rgba(255, 146, 43, 0.3);
+  }
+
   .top-filter-nav {
     display: flex;
     justify-content: center;
@@ -176,48 +222,22 @@
     color: white;
     box-shadow: 0 6px 12px rgba(255, 153, 0, 0.3);
   }
-  
+
   .product-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr); /* 4 columns on large screens */
   gap: 26px;
-}
+  }
 
-.fresh-section, .packed-section {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 columns on large screens */
-  gap: 26px;/* Hide by default */
-}
-
-@media (max-width: 992px) {
-  .fresh-section, .packed-section {
-    grid-template-columns: repeat(6, 1fr);
-  }
-}
-@media (max-width: 768px) {
-  .fresh-section, .packed-section {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-@media (max-width: 480px) {
-  .fresh-section, .packed-section {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 992px) {
-  .product-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
 @media (max-width: 768px) {
   .product-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets & phones */
   }
 }
+
 @media (max-width: 480px) {
   .product-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Optional: 1 column on very small phones */
   }
 }
 
@@ -235,7 +255,6 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8) !important;
   }
 
   .product-card:hover {
@@ -282,7 +301,6 @@
     display: none;
   }
 
-  /* Fresh Subfilters */
   .fresh-filter-buttons {
     margin: 20px 0;
     text-align: center;
@@ -307,14 +325,19 @@
     background-color: #2a9d8f;
   }
 
-  @media (max-width: 576px) {
-    .filter-nav-list {
-      justify-content: center;
-      flex-wrap: wrap;
+  @media (max-width: 768px) {
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
     }
-    .product-img img {
-      height: 160px;
+  }
+
+  @media (max-width: 480px) {
+    .product-grid {
+      grid-template-columns: 1fr;
+    }
+
+    #product-search {
+      width: 95%;
     }
   }
 </style>
-

@@ -23,10 +23,12 @@ const userSchema = new mongoose.Schema({
     default: 0,
   },
   address: {
-    street: { type: String, default: "" },
-    city: { type: String, default: "" },
-    state: { type: String, default: "" },
-    pincode: { type: String, default: "" }
+    street: String,
+    city: String,
+    state: String,
+    pincode: String,
+    latitude: Number,   // ⬅️ New
+    longitude: Number   // ⬅️ New
   },
   otp: {
     code: String,

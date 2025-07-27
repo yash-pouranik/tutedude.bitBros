@@ -6,6 +6,7 @@ const {isLoggedIn} = require("../middlewares")
 const Notification = require('../model/notification'); // Adjust the path accordingly
 const Review = require("../model/review");
 
+
 //otp
 const otpStore = new Map();
 
@@ -20,19 +21,32 @@ router.get("/signup", (req, res) => {
 });
 
 
-router.post("/signup", wrapAsync(async (req, res) => {
-    const { username, phone, userType, address } = req.body;
-    const existing = await User.findOne({ phone });
-    if (existing) {
-        req.flash("error", "Phone already registered");
-        return res.redirect("/signup");
-    }
+//adding coordinate
+const getCoordinatesFromAddress = require("../utils/geocode");
 
-    const user = new User({ username, phone, userType, address });
-    await user.save();
-    req.flash("success", "Signup successful! Please login.");
-    res.redirect("/login");
+router.post("/signup", wrapAsync(async (req, res) => {
+  const { username, phone, userType, address } = req.body;
+
+  const existing = await User.findOne({ phone });
+  if (existing) {
+    req.flash("error", "Phone already registered");
+    return res.redirect("/signup");
+  }
+
+  // 🧭 Get coordinates
+  const coordinates = await getCoordinatesFromAddress(address);
+  if (coordinates) {
+    address.latitude = coordinates.latitude;
+    address.longitude = coordinates.longitude;
+  }
+
+  const user = new User({ username, phone, userType, address });
+  await user.save();
+
+  req.flash("success", "Signup successful! Please login.");
+  res.redirect("/login");
 }));
+
 
 
 //login form
@@ -135,13 +149,19 @@ router.post("/profile/:id/edit", async (req, res) => {
   }
 
   try {
+    const coordinates = await getCoordinatesFromAddress(address);
+    if (coordinates) {
+      address.latitude = coordinates.latitude;
+      address.longitude = coordinates.longitude;
+    }
+
     await User.findByIdAndUpdate(id, {
       phone,
       address,
       userType
     });
 
-    res.redirect("/dashboard"); // or wherever you want
+    res.redirect("/dashboard");
   } catch (err) {
     console.error(err);
     res.status(500).send("Error updating profile");
@@ -228,6 +248,7 @@ router.post("/submit-review", isLoggedIn, async (req, res) => {
     res.redirect("/dashboard");
   }
 });
+
 
 
 module.exports = router;
