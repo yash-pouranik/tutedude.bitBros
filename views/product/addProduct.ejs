@@ -1,47 +1,67 @@
 <% layout("layouts/boilerplate") %>
 <link rel="stylesheet" href="/css/addProduct.css">
 
-<form action="/supplier/<%= supplier._id %>/add-product" method="POST" enctype="multipart/form-data">
-  <label>Product Name:</label>
-  <input type="text" name="name" required />
+<div class="form-container">
+  <form action="/supplier/<%= supplier._id %>/add-product" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+      <label>Product Name:</label>
+      <input type="text" name="name" required />
+    </div>
 
-  <label>Description:</label>
-  <textarea name="description"></textarea>
+    <div class="form-group">
+      <label>Description:</label>
+      <textarea name="description"></textarea>
+    </div>
 
-  <label>Type:</label>
-  <select name="type" required>
-    <option value="">-- Select --</option>
-    <option value="fresh">Fresh</option>
-    <option value="packed">Packed</option>
-  </select>
+    <div class="form-group">
+      <label>Type:</label>
+      <select name="type" required>
+        <option value="">-- Select --</option>
+        <option value="fresh">Fresh</option>
+        <option value="packed">Packed</option>
+      </select>
+    </div>
 
-  <label>Fresh Category:</label>
-  <select name="freshCategory">
-    <option value="">-- Select --</option>
-    <option value="veggies">Veggies</option>
-    <option value="dairy">Dairy</option>
-  </select>
+    <div class="form-group">
+      <label>Fresh Category:</label>
+      <select name="freshCategory">
+        <option value="">-- Select --</option>
+        <option value="veggies">Veggies</option>
+        <option value="dairy">Dairy</option>
+      </select>
+    </div>
 
-  <label>Price:</label>
-  <input type="number" name="price" step="0.01" required />
+    <div class="form-group">
+      <label>Price:</label>
+      <input type="number" name="price" step="0.01" required />
+    </div>
 
-  <label>Quantity:</label>
-  <input type="number" name="quantity" required />
+    <div class="form-group">
+      <label>Quantity:</label>
+      <input type="number" name="quantity" required />
+    </div>
 
-  <label>Unit:</label>
-  <select name="unit" required>
-    <option value="">-- Select --</option>
-    <option value="kg">kg</option>
-    <option value="litre">litre</option>
-    <option value="pack">pack</option>
-    <option value="piece">piece</option>
-  </select>
+    <div class="form-group">
+      <label>Unit:</label>
+      <select name="unit" required>
+        <option value="">-- Select --</option>
+        <option value="kg">kg</option>
+        <option value="litre">litre</option>
+        <option value="pack">pack</option>
+        <option value="piece">piece</option>
+      </select>
+    </div>
 
-  <label>Image </label>
-  <input type="file" name="image" placeholder="Optional" />
+    <div class="form-group">
+      <label>Image</label>
+      <input type="file" name="image" placeholder="Optional" />
+    </div>
 
-  <label>Available:</label>
-  <input type="checkbox" name="availability" checked />
+    <div class="form-group checkbox-group">
+      <label>Available:</label>
+      <input type="checkbox" name="availability" checked />
+    </div>
 
-  <button type="submit">Add Product</button>
-</form>
+    <button type="submit">Add Product</button>
+  </form>
+</div>
