@@ -5,35 +5,26 @@
 
     <!-- 🔍 Search Bar & Sort Option -->
     <div class="search-sort-wrapper animated-glass">
-  <input
-    id="productSearch"
-    type="text"
-    class="form-control search-input tough-input"
-    placeholder="🔍 Type to find what you need..."
-    oninput="handleSearch()"
-  >
+      <input
+        id="productSearch"
+        type="text"
+        class="form-control search-input tough-input"
+        placeholder="🔍 Search by name or category (e.g. milk, packed, dairy)"
+        oninput="handleSearch()"
+      >
 
-  <!-- Sort by Closest - Hidden unless searching -->
-  <div id="sortClosestContainer" class="form-check sort-check animated-fade" style="display: none;">
-    <input class="form-check-input tough-check" type="checkbox" id="sortClosest" onchange="handleSearch()">
-    <label class="form-check-label ms-2" for="sortClosest">Sort by Closest 📍</label>
-  </div>
+      <!-- Sort by Closest - Hidden unless searching -->
+      <div id="sortClosestContainer" class="form-check sort-check animated-fade" style="display: none;">
+        <input class="form-check-input tough-check" type="checkbox" id="sortClosest" onchange="handleSearch()">
+        <label class="form-check-label ms-2" for="sortClosest">Sort by Closest 📍</label>
+      </div>
 
-  <!-- Sort by Price - Always visible -->
-  <div id="sortPriceContainer" class="form-check sort-check animated-fade">
-    <input class="form-check-input tough-check" type="checkbox" id="sortPrice" onchange="handleSearch()">
-    <label class="form-check-label ms-2" for="sortPrice">Sort by Price 💰</label>
-  </div>
-</div>
-
-    <!-- 🧭 Filter Nav -->
-    <nav class="top-filter-nav mt-4">
-      <ul class="filter-nav-list">
-        <li><a href="#" class="filter-link active" onclick="showSection('all', event)">🥕 All</a></li>
-        <li><a href="#" class="filter-link" onclick="showSection('fresh', event)">🌱 Fresh</a></li>
-        <li><a href="#" class="filter-link" onclick="showSection('packed', event)">📦 Packed</a></li>
-      </ul>
-    </nav>
+      <!-- Sort by Price - Always visible -->
+      <div id="sortPriceContainer" class="form-check sort-check animated-fade">
+        <input class="form-check-input tough-check" type="checkbox" id="sortPrice" onchange="handleSearch()">
+        <label class="form-check-label ms-2" for="sortPrice">Sort by Price 💰</label>
+      </div>
+    </div>
 
     <!-- 📦 All Products -->
     <div id="all-section" class="item-section">
@@ -46,6 +37,7 @@
             <a href="/product/<%= p._id %>"
                class="product-card-link"
                data-name="<%= p.name.toLowerCase() %>"
+               data-category="<%= p.category || '' %>"
                data-distance="<%= p.distance || 99999 %>">
               <div class="product-card">
                 <div class="product-img">
@@ -68,73 +60,6 @@
       <% } %>
     </div>
 
-    <!-- 🥬 Fresh Section -->
-    <div id="fresh-section" class="item-section hidden">
-      <h2 class="section-title">Fresh Products</h2>
-      <div class="fresh-filter-buttons">
-        <button onclick="filterFresh('all', event)" class="fresh-btn active">All</button>
-        <button onclick="filterFresh('veggies', event)" class="fresh-btn">Veggies</button>
-        <button onclick="filterFresh('dairy', event)" class="fresh-btn">Dairy</button>
-      </div>
-      <div class="product-grid">
-        <% freshProducts.forEach(p => { %>
-          <a href="/product/<%= p._id %>"
-             class="product-card-link fresh-item <%= p.freshCategory %>"
-             data-name="<%= p.name.toLowerCase() %>"
-             data-distance="<%= p.distance || 99999 %>">
-            <div class="product-card">
-              <div class="product-img">
-                <img src="<%= p.imageUrl %>" alt="<%= p.name %>">
-              </div>
-              <div class="product-details">
-                <h3><%= p.name %></h3>
-                <p class="price">₹<%= p.price %> per <%= p.unit %></p>
-                  <% if (p.distance) { %>
-                    <p>Distance: <%= p.distance %> km</p>
-                  <% } else { %>
-                    <p>Distance: N/A</p>
-                  <% } %>
-              </div>
-            </div>
-          </a>
-        <% }) %>
-      </div>
-      <p class="placeholder hidden" id="freshNoResults">No matching products found.</p>
-    </div>
-
-    <!-- 📦 Packed Section -->
-    <div id="packed-section" class="item-section hidden">
-      <h2 class="section-title">Packed Products</h2>
-      <% if (packedProducts.length === 0) { %>
-        <p class="placeholder">No packed products available yet.</p>
-      <% } else { %>
-        <div class="product-grid">
-          <% packedProducts.forEach(p => { %>
-            <a href="/product/<%= p._id %>"
-               class="product-card-link"
-               data-name="<%= p.name.toLowerCase() %>"
-               data-distance="<%= p.distance || 99999 %>">
-              <div class="product-card">
-                <div class="product-img">
-                  <img src="<%= p.imageUrl %>" alt="<%= p.name %>">
-                </div>
-                <div class="product-details">
-                  <h3><%= p.name %></h3>
-                  <p class="price">₹<%= p.price %> per <%= p.unit %></p>
-                  <% if (p.distance) { %>
-                    <p>Distance: <%= p.distance %> km</p>
-                  <% } else { %>
-                    <p>Distance: N/A</p>
-                  <% } %>
-                </div>
-              </div>
-            </a>
-          <% }) %>
-        </div>
-        <p class="placeholder hidden" id="packedNoResults">No matching products found.</p>
-      <% } %>
-    </div>
-
   </div>
 </section>
 
@@ -147,33 +72,22 @@ function handleSearch() {
   const sortClosestContainer = document.getElementById('sortClosestContainer');
   sortClosestContainer.style.display = query ? 'inline-flex' : 'none';
 
-  // 🔍 Get active visible section
   const activeSection = document.querySelector('.item-section:not(.hidden)');
   const allCards = Array.from(activeSection.querySelectorAll('.product-card-link'));
-
-  // ⛱ Fresh section may have veggies/dairy filter applied
-  const isFresh = activeSection.id === 'fresh-section';
-  const freshActiveCategory = isFresh
-    ? document.querySelector('.fresh-btn.active')?.textContent.toLowerCase()
-    : null;
-
   let matchingCards = [];
 
   allCards.forEach(card => {
-    const name = card.dataset.name;
-    const visibleByCategory = !isFresh || freshActiveCategory === 'all' || card.classList.contains(freshActiveCategory);
+    const name = card.dataset.name || '';
+    const category = card.dataset.category || '';
+    const matchesSearch = !query || name.includes(query) || category.includes(query);
 
-    const matchesSearch = !query || name.includes(query);
-    const shouldShow = matchesSearch && visibleByCategory;
-
-    card.style.display = shouldShow ? '' : 'none';
-    if (shouldShow) matchingCards.push(card);
+    card.style.display = matchesSearch ? '' : 'none';
+    if (matchesSearch) matchingCards.push(card);
   });
 
-  // 🧮 Sort matching cards if needed
   if (sortPrice || (sortClosest && query)) {
     const grid = activeSection.querySelector('.product-grid');
-    
+
     if (sortClosest && query) {
       matchingCards.sort((a, b) => {
         return parseFloat(a.dataset.distance) - parseFloat(b.dataset.distance);
@@ -188,32 +102,14 @@ function handleSearch() {
       });
     }
 
-    // Re-append sorted cards
     matchingCards.forEach(card => grid.appendChild(card));
   }
 
-  // 🕳 Show/hide "no results" placeholder
-  const noResults = activeSection.querySelector('.placeholder:not(.fresh-filter-buttons)');
+  const noResults = activeSection.querySelector('.placeholder');
   if (noResults) {
-    const visibleCards = matchingCards;
-    noResults.style.display = visibleCards.length === 0 ? '' : 'none';
+    noResults.style.display = matchingCards.length === 0 ? '' : 'none';
   }
 }
-function filterFresh(category, event) {
-  event?.preventDefault();
-
-  document.querySelectorAll('.fresh-btn').forEach(btn => btn.classList.remove('active'));
-  event?.target.classList.add('active');
-
-  const items = document.querySelectorAll('#fresh-section .product-card-link');
-  items.forEach(item => {
-    const isInCategory = category === 'all' || item.classList.contains(category);
-    item.style.display = isInCategory ? '' : 'none';
-  });
-
-  handleSearch(); // 🔁 Re-run search/sort logic after filter
-}
-
 </script>
 
 <style>
@@ -253,43 +149,6 @@ function filterFresh(category, event) {
     color: #222;
     margin-bottom: 1.5rem;
     text-align: center;
-  }
-
-  .top-filter-nav {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 30px;
-  }
-
-  .filter-nav-list {
-    display: flex;
-    gap: 15px;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    flex-wrap: wrap;
-  }
-
-  .filter-link {
-    text-decoration: none;
-    padding: 10px 22px;
-    background: #f0f0f0;
-    border-radius: 30px;
-    color: #333;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06);
-  }
-
-  .filter-link:hover {
-    background-color: #ffe8b3;
-    color: #e67e22;
-  }
-
-  .filter-link.active {
-    background-color: #ffa94d;
-    color: white;
-    box-shadow: 0 6px 12px rgba(255, 153, 0, 0.3);
   }
 
   .product-card-link {
@@ -353,125 +212,94 @@ function filterFresh(category, event) {
     display: none;
   }
 
-  .fresh-filter-buttons {
-    margin: 20px 0;
-    text-align: center;
+  .search-sort-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 12px rgba(255, 169, 77, 0.3);
+    animation: slideFadeIn 0.8s ease forwards;
   }
 
-  .fresh-btn {
-    padding: 8px 18px;
-    margin: 5px;
-    border: none;
-    border-radius: 25px;
-    background: #88d498;
-    color: white;
+  .search-input.tough-input {
+    flex: 1;
+    min-width: 250px;
+    max-width: 360px;
+    padding: 12px 16px;
+    font-size: 1rem;
     font-weight: 500;
+    border-radius: 12px;
+    border: 1px solid #ffa94d;
+    background-color: #fff;
     transition: all 0.3s ease;
+    box-shadow: inset 0 0 4px rgba(255, 153, 0, 0.2);
   }
 
-  .fresh-btn:hover {
-    background-color: #57cc99;
+  .search-input.tough-input:focus {
+    outline: none;
+    border-color: #e67e22;
+    box-shadow: 0 0 0 4px rgba(255, 169, 77, 0.25);
   }
 
-  .fresh-btn.active {
-    background-color: #2a9d8f;
+  .sort-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: fadeInUp 0.7s ease forwards;
+    animation-delay: 0.3s;
+  }
+
+  .tough-check {
+    accent-color: #ffa94d;
+    width: 1.1rem;
+    height: 1.1rem;
+    box-shadow: 0 0 4px rgba(255, 169, 77, 0.5);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .tough-check:checked {
+    box-shadow: 0 0 10px rgba(255, 169, 77, 0.8);
+  }
+
+  .form-check-label {
+    font-weight: 600;
+    color: #333;
   }
 
   @media (max-width: 576px) {
-    .filter-nav-list {
-      justify-content: center;
-      flex-wrap: wrap;
+    .search-sort-wrapper {
+      flex-direction: column;
+      align-items: stretch;
     }
+
     .product-img img {
       height: 160px;
     }
   }
-  .search-sort-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-  justify-content: center;
-  align-items: center;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 12px rgba(255, 169, 77, 0.3);
-  animation: slideFadeIn 0.8s ease forwards;
-}
 
-.search-input.tough-input {
-  flex: 1;
-  min-width: 250px;
-  max-width: 360px;
-  padding: 12px 16px;
-  font-size: 1rem;
-  font-weight: 500;
-  border-radius: 12px;
-  border: 1px solid #ffa94d;
-  background-color: #fff;
-  transition: all 0.3s ease;
-  box-shadow: inset 0 0 4px rgba(255, 153, 0, 0.2);
-}
-
-.search-input.tough-input:focus {
-  outline: none;
-  border-color: #e67e22;
-  box-shadow: 0 0 0 4px rgba(255, 169, 77, 0.25);
-}
-
-.sort-check {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  opacity: 0;
-  transform: translateY(-10px);
-  animation: fadeInUp 0.7s ease forwards;
-  animation-delay: 0.3s;
-}
-
-.tough-check {
-  accent-color: #ffa94d;
-  width: 1.1rem;
-  height: 1.1rem;
-  box-shadow: 0 0 4px rgba(255, 169, 77, 0.5);
-  transition: all 0.2s ease-in-out;
-}
-
-.tough-check:checked {
-  box-shadow: 0 0 10px rgba(255, 169, 77, 0.8);
-}
-
-.form-check-label {
-  font-weight: 600;
-  color: #333;
-}
-
-@media (max-width: 576px) {
-  .search-sort-wrapper {
-    flex-direction: column;
-    align-items: stretch;
+  @keyframes slideFadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   }
-}
 
-/* 🔥 Animation */
-@keyframes slideFadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.95);
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes fadeInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-  </style>
+</style>
