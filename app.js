@@ -23,8 +23,6 @@ const multer = require("multer");
 //models
 const User = require("./model/user.js");
 const Product = require("./model/product.js"); 
-
-
 //otp
 const otpStore = new Map();
 
@@ -58,6 +56,8 @@ async function main() {
 main()
 .then(async(r) => {
     console.log("Connecton to DB Done");
+    
+    
     // in your script or route
 })
 .catch((e) => {
@@ -132,28 +132,7 @@ app.get("/contact", (req, res)=>{
 })
 
 
-app.get('/shopping', async (req, res) => {
-  try {
-    const allProducts = await Product.find({ availability: true });
 
-    // Filtered lists
-    const freshProducts = allProducts.filter(p => p.type === 'fresh');
-    const packedProducts = allProducts.filter(p => p.type === 'packed');
-    const veggies = freshProducts.filter(p => p.freshCategory === 'veggies');
-    const dairy = freshProducts.filter(p => p.freshCategory === 'dairy');
-
-    res.render('product/shopping', {
-      allProducts,
-      freshProducts,
-      packedProducts,
-      veggies,
-      dairy
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Server Error');
-  }
-});
 
 
 //error handle middlewares
