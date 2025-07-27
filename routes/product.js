@@ -302,7 +302,6 @@ router.put('/product/:id', isLoggedIn, isSupplier, isOwner, async (req, res) => 
         price,
         quantity,
         unit,
-        imageUrl: imageUrl || null,
         availability,
         category
       },
