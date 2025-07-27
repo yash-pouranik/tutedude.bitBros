@@ -125,7 +125,7 @@
 
   .shopping-page .container {
     padding-top: 2rem;
-    padding-bottom: 3rem;
+    padding-bottom: 2rem;
   }
 
   .section-title {
@@ -173,12 +173,24 @@
     color: white;
     box-shadow: 0 6px 12px rgba(255, 153, 0, 0.3);
   }
-
+  
   .product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 26px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 columns on large screens */
+  gap: 26px;
   }
+
+@media (max-width: 768px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets & phones */
+  }
+}
+
+@media (max-width: 480px) {
+  .product-grid {
+    grid-template-columns: 1fr; /* Optional: 1 column on very small phones */
+  }
+}
 
   .product-card-link {
     text-decoration: none;
