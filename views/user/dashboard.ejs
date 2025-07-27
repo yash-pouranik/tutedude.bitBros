@@ -1,23 +1,6 @@
 <% layout("layouts/boilerplate") %>
 <script src="/socket.io/socket.io.js"></script>
 
-<% user.notifications.forEach(notif => { %>
-<% if (notif.type === 'review_request') { %>
-    <div class="alert alert-info d-flex justify-content-between align-items-center">
-      <span><%= notif.message %></span>
-      <button 
-        class="btn btn-sm btn-outline-primary review-btn"
-        data-supplier-id="<%= notif.supplierId %>"
-        data-bs-toggle="modal"
-        data-bs-target="#reviewModal">
-        Give Review
-      </button>
-    </div>
-  <% } else { %>
-    <p><a href="<%= notif.link %>"><%= notif.message %></a></p>
-  <% } %>
-<% }) %>
-
 
 
 <div class="container py-5">
@@ -95,107 +78,8 @@
   <% } %>
 
 <!-- Review Modal -->
-<div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <form action="/submit-review" method="POST">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="reviewModalLabel">Rate Your Supplier</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-
-        <div class="modal-body">
-          <!-- Hidden Inputs -->
-          <input type="hidden" name="supplierId" id="supplierIdInput">
-          <input type="hidden" name="orderId" id="orderIdInput">
-          <input type="hidden" name="fromUser" value="<%= currUser._id %>">
-
-          <!-- Rating Inputs -->
-          <div class="mb-3">
-            <label class="form-label">Quality of Product</label>
-            <select class="form-select" name="quality" required>
-              <option value="" disabled selected>Select Rating</option>
-              <option value="1">1 - Poor</option>
-              <option value="2">2</option>
-              <option value="3">3 - Average</option>
-              <option value="4">4</option>
-              <option value="5">5 - Excellent</option>
-            </select>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Delivery Speed</label>
-            <select class="form-select" name="deliverySpeed" required>
-              <option value="" disabled selected>Select Rating</option>
-              <option value="1">1 - Very Late</option>
-              <option value="2">2</option>
-              <option value="3">3 - On Time</option>
-              <option value="4">4</option>
-              <option value="5">5 - Early</option>
-            </select>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Accuracy of Order</label>
-            <select class="form-select" name="accuracy" required>
-              <option value="" disabled selected>Select Rating</option>
-              <option value="1">1 - Inaccurate</option>
-              <option value="2">2</option>
-              <option value="3">3 - Mostly Accurate</option>
-              <option value="4">4</option>
-              <option value="5">5 - Perfect</option>
-            </select>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Communication</label>
-            <select class="form-select" name="communication" required>
-              <option value="" disabled selected>Select Rating</option>
-              <option value="1">1 - Poor</option>
-              <option value="2">2</option>
-              <option value="3">3 - Okay</option>
-              <option value="4">4</option>
-              <option value="5">5 - Excellent</option>
-            </select>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Additional Comments (Optional)</label>
-            <textarea class="form-control" name="comments" rows="3"></textarea>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Submit Review</button>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
 
 </div>
 
 <script>
-  // Set supplierId in review modal
- document.querySelectorAll('.review-btn').forEach(button => {
-  button.addEventListener('click', () => {
-    const supplierId = button.getAttribute('data-supplier-id');
-    const orderId = button.getAttribute('data-order-id');
-    document.getElementById('supplierIdInput').value = supplierId;
-    document.getElementById('orderIdInput').value = orderId;
-  });
-});
-
-
-  // SOCKET.IO NOTIFICATIONS
-  const socket = io();
-
-  <% if (currUser) { %>
-    socket.emit("join", "<%= currUser._id %>");
-  <% } %>
-
-  socket.on("newNotification", function(data) {
-    alert(data.message);
-    // You can replace alert with a custom toast/notification UI
-  });
 </script>

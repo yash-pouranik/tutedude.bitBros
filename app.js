@@ -10,7 +10,6 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
 const flash = require("connect-flash");
-require('dotenv').config();
 const http = require("http");
 const { Server } = require("socket.io");
 
@@ -76,7 +75,7 @@ const {setLocals} = require("./middlewares.js");
 
 
 const sessionConfig = {
-  secret: "bitbrosSecret", // Or "bettersecret", but be consistent
+  secret: process.env.SESSION_SECRET || "bitbrosDefaultSecret",
   resave: false,
   saveUninitialized: true,
   cookie: {
@@ -161,15 +160,6 @@ app.get("/contact", (req, res)=>{
 
 module.exports.io = io;
 
-io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
-
-  socket.on("joinRoom", (userId) => {
-    socket.join(userId); // user joins their own room
-    console.log(`User joined room: ${userId}`);
-  });
-});
-
 
 //error handle middlewares
 app.use((err, req, res, next) => {
@@ -178,7 +168,8 @@ app.use((err, req, res, next) => {
     let ename = err.name;
     console.log("Some issue:", err.name);
     console.log(err);
-    res.status(status).send("page not found");
+   res.status(status).send(message || "Something went wrong");
+
 });
 
 // ✅ CORRECT:
