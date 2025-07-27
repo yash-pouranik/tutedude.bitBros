@@ -128,14 +128,27 @@
 
   function filterProducts() {
     const input = document.getElementById("product-search").value.toLowerCase();
-    const items = document.querySelectorAll("#all-products-list .product-item");
 
-    items.forEach(item => {
+    // All Products
+    document.querySelectorAll("#all-products-list .product-item").forEach(item => {
       const name = item.dataset.name;
+      item.style.display = name.includes(input) ? "block" : "none";
+    });
+
+    // Fresh Products
+    document.querySelectorAll("#fresh-section .fresh-item").forEach(item => {
+      const name = item.querySelector("h3").innerText.toLowerCase();
+      item.style.display = name.includes(input) ? "block" : "none";
+    });
+
+    // Packed Products
+    document.querySelectorAll("#packed-section .product-card-link").forEach(item => {
+      const name = item.querySelector("h3").innerText.toLowerCase();
       item.style.display = name.includes(input) ? "block" : "none";
     });
   }
 </script>
+
 
 <!-- Styles -->
 <style>
