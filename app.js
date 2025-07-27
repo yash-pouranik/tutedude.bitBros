@@ -120,6 +120,9 @@ const userRoute = require("./routes/user")
 const productRoute = require("./routes/product.js")
 const orderRoute = require("./routes/order.js")(io); // pass io into router
 const reviewRoute = require("./routes/review.js")
+const contactRoutes = require('./routes/contact');
+
+app.use("/", contactRoutes);
 
 app.use("/", orderRoute);
 app.use("/", reviewRoute);
