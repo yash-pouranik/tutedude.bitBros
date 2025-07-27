@@ -1,6 +1,6 @@
 /* Hero Section Styling */
 .hero {
-  background-image: url('../images/bazaar.jpg');
+  background-image: url('https://res.cloudinary.com/dd1ybjsgl/image/upload/v1753628866/bazaar_imwvpr.png');
   background-size: cover;
   background-position: center;
   height: 90vh;
