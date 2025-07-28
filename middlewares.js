@@ -39,9 +39,18 @@ module.exports.isLoggedIn =async (req, res, next) => {
 
 // middlewares/isVendor.js
 
-module.exports.isSupplier = (req, res, next) => {
-  if (req.session.user && req.session.user.userType === 'supplier') {
-    return next();
+module.exports.isSupplier = async (req, res, next) => {
+  console.log(req.session.user)
+  if(!req.session.user) {
+     req.flash('error', 'must be logged in');
+     return res.redirect('/dashboard');
+  }
+  if (req.session.user) {
+    const user = await User.findById(req.session.user);
+    console.log(user.userType, ' ===  supplier');
+    if(user.userType === "supplier") {
+      return next();
+    }
   }
   req.flash('error', 'Only suppliers allowed');
   res.redirect('/dashboard');
